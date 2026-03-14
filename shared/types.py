@@ -1,9 +1,5 @@
 """
-shared/types.py — Shared Data Structures
-
-The contract between all modules. Every piece of the Sequence game
-references these types and constants so that nothing is hardcoded
-in multiple places.
+shared/types.py - Shared types and constants used by all modules.
 """
 
 from typing import NamedTuple, List, Dict, Set, Tuple, Optional
@@ -15,8 +11,8 @@ class Card(NamedTuple):
     """
     A single playing card.
 
-    rank: "2", "3", ..., "10", "J", "Q", "K", "A"
-    suit: "spades", "hearts", "diamonds", "clubs"   (always lowercase)
+    rank: "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"
+    suit: "spades", "hearts", "diamonds", "clubs" are always in lowercase.
     """
     rank: str
     suit: str
@@ -28,12 +24,12 @@ class Card(NamedTuple):
 # ── Jack helpers ────────────────────────────────────────────────────
 
 def is_one_eyed_jack(card: Card) -> bool:
-    """♠J and ♥J — used to REMOVE an opponent's chip."""
+    """One-eyed Jack (J of spades, J of hearts) - used to REMOVE an opponent's chip."""
     return card.rank == "J" and card.suit in ("spades", "hearts")
 
 
 def is_two_eyed_jack(card: Card) -> bool:
-    """♦J and ♣J — wild, place your chip on ANY empty cell."""
+    """Two-eyed Jack (J of diamonds, J of clubs) - wild, place your chip on ANY empty cell."""
     return card.rank == "J" and card.suit in ("diamonds", "clubs")
 
 
@@ -49,11 +45,11 @@ class Move(NamedTuple):
     A single player action.
 
     card:      the Card being played from hand
-    position:  (row, col) on the board — 0-indexed
+    position:  (row, col) on the board, 0-indexed
     move_type: exactly one of "place", "wild", "remove"
-               • "place"  — regular card, put your chip on the matching cell
-               • "wild"   — two-eyed Jack, put your chip on any empty cell
-               • "remove" — one-eyed Jack, remove one opponent chip
+               "place"  - regular card, put your chip on the matching cell
+               "wild"   - two-eyed Jack, put your chip on any empty cell
+               "remove" - one-eyed Jack, remove one opponent chip
     """
     card: Card
     position: Tuple[int, int]
@@ -91,7 +87,7 @@ SEQUENCE_LENGTH: int = 5    # five-in-a-row
 
 
 # chip_grid sentinel values
-CORNER_CHIP: int = -1       # wild — counts for every player
+CORNER_CHIP: int = -1       # wild - counts for every player
 EMPTY: int = 0
 PLAYER_1: int = 1
 PLAYER_2: int = 2
@@ -102,7 +98,6 @@ PLAYER_2: int = 2
 def get_opponents(player: int) -> List[int]:
     """
     Return a list of opponent player numbers.
-    Use this instead of hardcoding '3 - player'.
     """
     all_players = list(range(1, NUM_PLAYERS + 1))
     return [p for p in all_players if p != player]
@@ -147,7 +142,7 @@ class GameState:
     """
 
     def __init__(self) -> None:
-        # 10×10 board — corners set to -1, everything else 0
+        # 10x10 board - corners set to -1, everything else 0
         self.chip_grid: List[List[int]] = [
             [EMPTY] * BOARD_SIZE for _ in range(BOARD_SIZE)
         ]
@@ -178,12 +173,11 @@ class GameState:
 
     def copy(self) -> "GameState":
         """
-        Return a fast, shallow-enough copy of this game state.
+        Return a fast copy of the game state.
 
-        Only mutable containers are duplicated.  Immutable values
-        (ints, Cards which are NamedTuples) are shared safely.
-        Much faster than deepcopy — important during minimax search
-        where thousands of copies are created per decision.
+        Lists and dictionaries are duplicated to avoid accidental sharing.
+        Cards and ints are shared safely because they cannot be changed.
+        This is much faster than deepcopy, which is important for the AI.
         """
         new = GameState()
         new.chip_grid = [row[:] for row in self.chip_grid]
