@@ -14,9 +14,9 @@ def run_tests():
     print(f"\nSingle game complete. Winner: {winner}\n")
     
     # 100 games to stress test
-    print("Running a 100-game tournament to verify engine scalability...\n")
+    print("Running a 100-game tournament to verify engine\n")
     results = run_tournament(agent1, agent2, n_games=100)
-    print("\nAll engine test scripts ran successfully.")
+    print("\nAll game engine test scripts ran")
 
 
 if __name__ == "__main__":
