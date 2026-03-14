@@ -1,3 +1,4 @@
+# Phase 1
 """
 Functions for legal moves for a player and to identify dead cards.
 """
@@ -63,9 +64,7 @@ def get_dead_cards(
 ) -> list[Card]:
     """
     Return cards in the player's hand that cannot be played anywhere.
-    A card is "dead" when every board position it maps to is already occupied.
-    Jacks are never dead (they always have potential targets).
-    If player is None, defaults to state.current_player.
+    A card is dead when every board position it maps to is already occupied.
     Returns a list of dead Cards.
     """
     if player is None:

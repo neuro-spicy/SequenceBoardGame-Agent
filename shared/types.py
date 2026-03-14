@@ -1,5 +1,6 @@
+# Phase 1
 """
-shared/types.py - Shared types and constants used by all modules.
+Shared types and constants used by all modules.
 """
 
 from typing import NamedTuple

@@ -1,5 +1,4 @@
-import sys
-import random
+# Phase 1
 from game.game_loop import play_game, run_tournament
 from game.agents.random_agent import RandomAgent
 
@@ -12,10 +11,10 @@ def run_tests():
     print("Running a single verbose game...\n")
     winner = play_game(agent1, agent2, verbose=True)
     print(f"\nSingle game complete. Winner: {winner}\n")
-    
+
     # 100 games
     print("Running a 100-game tournament to verify engine\n")
-    results = run_tournament(agent1, agent2, n_games=100)
+    run_tournament(agent1, agent2, n_games=100)
     print("\nAll game engine test scripts ran")
 
 

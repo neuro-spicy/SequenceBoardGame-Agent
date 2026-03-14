@@ -1,5 +1,6 @@
+
 """
-Core game loop and simulation controller for Sequence.
+Phase 1 : Core game loop and simulation controller for Sequence.
 """
 
 from shared.types import GameState, HAND_SIZE, next_player
@@ -27,7 +28,7 @@ def new_game() -> GameState:
 
 def handle_dead_cards(state: GameState, player: int) -> None:
     """
-    Before a player's turn, remove any dead cards and draw replacements.
+    remove any dead cards and draw replacements before the player turn.
     """
     dead_cards = get_dead_cards(state, player)
     for card in dead_cards:
@@ -39,7 +40,7 @@ def handle_dead_cards(state: GameState, player: int) -> None:
 
 def apply_move(state: GameState, move) -> int:
     """
-    Executes a move and returns the winner (0 if game continues).
+    Executes a move and returns the winner.
     """
     player = state.current_player
 
@@ -54,7 +55,7 @@ def apply_move(state: GameState, move) -> int:
     elif move.move_type == "remove":
         state.remove_chip(r, c)
 
-    # Check for new sequences (only if we PLACED a chip, not removed)
+    # Check for new sequences only if we PLACED a chip)
     if move.move_type in ("place", "wild"):
         new_sequences = check_sequences(state, player)
         for seq in new_sequences:
@@ -74,7 +75,9 @@ def apply_move(state: GameState, move) -> int:
     return winner
 
 
-def play_game(agent1, agent2, verbose: bool = False, max_turns: int = 500) -> int:
+def play_game(
+    agent1, agent2, verbose: bool = False, max_turns: int = 500
+) -> int:
     """
     Runs a complete game between two agents.
     """
@@ -89,13 +92,14 @@ def play_game(agent1, agent2, verbose: bool = False, max_turns: int = 500) -> in
         moves = get_legal_moves(state, player)
 
         if not moves:
-            # No legal moves exist, switch to next player
+            # No moves exist, switching next player
             state.current_player = next_player(player)
             continue
 
         move = agent.choose_move(state)
         if verbose:
-            print(f"Turn {turn + 1} | Player {player} plays {move.card} at {move.position} ({move.move_type})")
+            print(f"Turn {turn + 1} | Player {player} plays {move.card} "
+                  f"at {move.position} ({move.move_type})")
 
         winner = apply_move(state, move)
         if winner != 0:
@@ -114,11 +118,9 @@ def run_tournament(agent1, agent2, n_games: int = 100) -> dict:
 
     for game in range(n_games):
         if game % 2 == 0:
-            # Even games: agent1 is player 1, agent2 is player 2
             winner = play_game(agent1, agent2)
             results[winner] += 1
         else:
-            # Odd games: agent2 is player 1, agent1 is player 2
             winner = play_game(agent2, agent1)
             if winner == 1:
                 results[2] += 1
@@ -131,5 +133,5 @@ def run_tournament(agent1, agent2, n_games: int = 100) -> dict:
     print(f"Agent 1 Won {results[1]} ({(results[1]/n_games)*100:.1f}%)")
     print(f"Agent 2 Won {results[2]} ({(results[2]/n_games)*100:.1f}%)")
     print(f"Draws: {results[0]} ({(results[0]/n_games)*100:.1f}%)")
-    
+
     return results
