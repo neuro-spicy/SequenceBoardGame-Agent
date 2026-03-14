@@ -2,10 +2,8 @@
 shared/types.py - Shared types and constants used by all modules.
 """
 
-from typing import NamedTuple, List, Dict, Set, Tuple, Optional
+from typing import NamedTuple
 
-
-# ── Card ────────────────────────────────────────────────────────────
 
 class Card(NamedTuple):
     """
@@ -21,15 +19,19 @@ class Card(NamedTuple):
         return f"{self.rank} of {self.suit}"
 
 
-# ── Jack helpers ────────────────────────────────────────────────────
-
 def is_one_eyed_jack(card: Card) -> bool:
-    """One-eyed Jack (J of spades, J of hearts) - used to REMOVE an opponent's chip."""
+    """
+    One-eyed Jack (J of spades, J of hearts)
+    Used to REMOVE an opponent's chip.
+    """
     return card.rank == "J" and card.suit in ("spades", "hearts")
 
 
 def is_two_eyed_jack(card: Card) -> bool:
-    """Two-eyed Jack (J of diamonds, J of clubs) - wild, place your chip on ANY empty cell."""
+    """
+    Two-eyed Jack (J of diamonds, J of clubs)
+    Wild, place your chip on ANY empty cell.
+    """
     return card.rank == "J" and card.suit in ("diamonds", "clubs")
 
 
@@ -37,8 +39,6 @@ def is_jack(card: Card) -> bool:
     """True for any Jack (one-eyed or two-eyed)."""
     return card.rank == "J"
 
-
-# ── Move ────────────────────────────────────────────────────────────
 
 class Move(NamedTuple):
     """
@@ -52,25 +52,23 @@ class Move(NamedTuple):
                "remove" - one-eyed Jack, remove one opponent chip
     """
     card: Card
-    position: Tuple[int, int]
-    move_type: str          # "place" | "wild" | "remove"
+    position: tuple[int, int]
+    move_type: str          # "place" or "wild" or "remove"
 
-
-# ── Game configuration constants ────────────────────────────────────
 
 BOARD_SIZE: int = 10
 
-CORNERS: List[Tuple[int, int]] = [
+CORNERS: list[tuple[int, int]] = [
     (0, 0),
     (0, BOARD_SIZE - 1),
     (BOARD_SIZE - 1, 0),
     (BOARD_SIZE - 1, BOARD_SIZE - 1),
 ]
 
-RANKS: List[str] = ["2", "3", "4", "5", "6", "7", "8", "9", "10",
-                     "J", "Q", "K", "A"]
+RANKS: list[str] = ["2", "3", "4", "5", "6", "7", "8", "9", "10",
+                    "J", "Q", "K", "A"]
 
-SUITS: List[str] = ["spades", "hearts", "diamonds", "clubs"]
+SUITS: list[str] = ["spades", "hearts", "diamonds", "clubs"]
 
 HAND_SIZE: int = 7          # cards per player in a 2-player game
 
@@ -78,12 +76,12 @@ NUM_PLAYERS: int = 2
 
 NUM_DECKS: int = 2          # two standard 52-card decks → 104 cards
 
-SEQUENCES_TO_WIN: Dict[int, int] = {
+SEQUENCES_TO_WIN: dict[int, int] = {
     2: 2,   # 2 players/teams: need 2 sequences
     3: 1,   # 3 players/teams: need 1 sequence
 }
 
-SEQUENCE_LENGTH: int = 5    # five-in-a-row
+SEQUENCE_LENGTH: int = 5    # 5 is the sequence lenght
 
 
 # chip_grid sentinel values
@@ -95,7 +93,7 @@ PLAYER_2: int = 2
 
 # ── Player helpers ──────────────────────────────────────────────────
 
-def get_opponents(player: int) -> List[int]:
+def get_opponents(player: int) -> list[int]:
     """
     Return a list of opponent player numbers.
     """
@@ -108,54 +106,50 @@ def next_player(player: int) -> int:
     return (player % NUM_PLAYERS) + 1
 
 
-# ── GameState ───────────────────────────────────────────────────────
-
 class GameState:
     """
     Complete snapshot of a Sequence game at one moment in time.
 
-    Attributes
-    ----------
-    chip_grid : List[List[int]]
-        10×10 grid.  Values:
-            -1  corner (wild, counts for all players)
+    Attributes:
+    chip_grid : list[list[int]]
+        10×10 grid.
+          Values:
+            -1  corner - wild, counts for all players
              0  empty
              1  player 1's chip
              2  player 2's chip
 
-    hands : Dict[int, List[Card]]
+    hands : dict[int, list[Card]]
         {player_number: [list of Cards]}.
         Example: state.hands[1] → player 1's current cards.
 
-    deck : List[Card]
+    deck : list[Card]
         Draw pile. Cards are drawn from the end (deck.pop()).
 
-    discard_pile : List[Card]
+    discard_pile : list[Card]
         Cards that have been played or declared dead.
 
     current_player : int
-        Whose turn it is (1 or 2).
+        Whose turn it is 1 or 2.
 
-    completed_sequences : Set[Tuple[int, int]]
+    completed_sequences : set[tuple[int, int]]
         (row, col) positions that are part of a finished sequence.
         One-eyed Jacks CANNOT remove chips from these positions.
     """
 
     def __init__(self) -> None:
         # 10x10 board - corners set to -1, everything else 0
-        self.chip_grid: List[List[int]] = [
+        self.chip_grid: list[list[int]] = [
             [EMPTY] * BOARD_SIZE for _ in range(BOARD_SIZE)
         ]
         for r, c in CORNERS:
             self.chip_grid[r][c] = CORNER_CHIP
 
-        self.hands: Dict[int, List[Card]] = {}
-        self.deck: List[Card] = []
-        self.discard_pile: List[Card] = []
+        self.hands: dict[int, list[Card]] = {}
+        self.deck: list[Card] = []
+        self.discard_pile: list[Card] = []
         self.current_player: int = PLAYER_1
-        self.completed_sequences: Set[Tuple[int, int]] = set()
-
-    # ── grid helpers ────────────────────────────────────────────────
+        self.completed_sequences: set[tuple[int, int]] = set()
 
     def get_chip(self, row: int, col: int) -> int:
         """Return the chip value at (row, col)."""
@@ -168,8 +162,6 @@ class GameState:
     def remove_chip(self, row: int, col: int) -> None:
         """Remove the chip at (row, col), setting it back to EMPTY."""
         self.chip_grid[row][col] = EMPTY
-
-    # ── copying ─────────────────────────────────────────────────────
 
     def copy(self) -> "GameState":
         """
@@ -187,8 +179,6 @@ class GameState:
         new.current_player = self.current_player
         new.completed_sequences = set(self.completed_sequences)
         return new
-
-    # ── dunder helpers ──────────────────────────────────────────────
 
     def __repr__(self) -> str:
         return (
