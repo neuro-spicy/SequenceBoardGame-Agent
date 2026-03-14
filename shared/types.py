@@ -74,7 +74,7 @@ HAND_SIZE: int = 7          # cards per player in a 2-player game
 
 NUM_PLAYERS: int = 2
 
-NUM_DECKS: int = 2          # two standard 52-card decks → 104 cards
+NUM_DECKS: int = 2          # two standard 52-card decks -> 104 cards
 
 SEQUENCES_TO_WIN: dict[int, int] = {
     2: 2,   # 2 players/teams: need 2 sequences
@@ -90,8 +90,6 @@ EMPTY: int = 0
 PLAYER_1: int = 1
 PLAYER_2: int = 2
 
-
-# ── Player helpers ──────────────────────────────────────────────────
 
 def get_opponents(player: int) -> list[int]:
     """
@@ -112,7 +110,7 @@ class GameState:
 
     Attributes:
     chip_grid : list[list[int]]
-        10×10 grid.
+        10x10 grid.
           Values:
             -1  corner - wild, counts for all players
              0  empty
@@ -121,7 +119,7 @@ class GameState:
 
     hands : dict[int, list[Card]]
         {player_number: [list of Cards]}.
-        Example: state.hands[1] → player 1's current cards.
+        Example: state.hands[1] -> player 1's current cards.
 
     deck : list[Card]
         Draw pile. Cards are drawn from the end (deck.pop()).

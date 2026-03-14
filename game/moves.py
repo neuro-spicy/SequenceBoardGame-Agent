@@ -18,7 +18,7 @@ def get_legal_moves(
     """
     Return every legal move the given player can make.
     If player is None, defaults to state.current_player.
-    Returns a list of Move(card, position, move_type).
+    Returns a list of Move - card, position and move_type.
     """
     if player is None:
         player = state.current_player
@@ -33,14 +33,12 @@ def get_legal_moves(
         seen_cards.add(card)
 
         if is_two_eyed_jack(card):
-            # Wild — place on any empty, non-corner cell
             for r in range(BOARD_SIZE):
                 for c in range(BOARD_SIZE):
                     if state.chip_grid[r][c] == 0:
                         moves.append(Move(card, (r, c), "wild"))
 
         elif is_one_eyed_jack(card):
-            # Remove — target any opponent chip not in a completed sequence
             opponents = get_opponents(player)
             for r in range(BOARD_SIZE):
                 for c in range(BOARD_SIZE):
@@ -51,7 +49,6 @@ def get_legal_moves(
                         moves.append(Move(card, (r, c), "remove"))
 
         else:
-            # Regular card — place on matching empty positions
             positions = CARD_TO_POSITIONS.get(card, [])
             for pos in positions:
                 r, c = pos
@@ -79,11 +76,10 @@ def get_dead_cards(
 
     for card in hand:
         if is_jack(card):
-            continue  # Jacks are never dead
+            continue
 
         positions = CARD_TO_POSITIONS.get(card, [])
         if not positions:
-            # Card not on the board at all — treat as dead
             dead.append(card)
             continue
 
