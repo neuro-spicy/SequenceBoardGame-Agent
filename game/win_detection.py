@@ -10,7 +10,7 @@ from game.board import ALL_LINES
 def check_sequences(state: GameState, player: int) -> list[tuple]:
     """
     Find all completed Sequence of 5 for the given player.
-    5 player's chip or a corner wild (-1) with 4 player's chip.
+    5 player's chip or a corner wild -1 with 4 player's chip.
     Returns 5  sequence positions.
     """
     completed = []
