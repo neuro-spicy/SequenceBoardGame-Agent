@@ -168,7 +168,6 @@ class GameState:
 
         Lists and dictionaries are duplicated to avoid accidental sharing.
         Cards and ints are shared safely because they cannot be changed.
-        This is much faster than deepcopy, which is important for the AI.
         """
         new = GameState()
         new.chip_grid = [row[:] for row in self.chip_grid]

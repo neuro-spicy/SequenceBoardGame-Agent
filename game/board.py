@@ -148,8 +148,8 @@ BOARD_LAYOUT = [
 
 def _build_lookups():
     """Create two lookup dictionaries from the board layout.
-    card_to_pos: given a card, find which two cells it sits on.
-    pos_to_card: given a cell like (3, 5), find which card is there.
+    card_to_pos:  find which two cells a card sits on.
+    pos_to_card:  find which card is on that cell.
     """
     card_to_pos = {}
     pos_to_card = {}
