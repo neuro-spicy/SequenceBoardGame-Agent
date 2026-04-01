@@ -1,9 +1,13 @@
-# main.py — Phase 4 integration test
+# Phase 1 & 4
+"""
+Phase 4: Integration Test
+"""
+
+import time
+
 from game.game_loop import play_game, run_tournament
 from game.agents.random_agent import RandomAgent
 from agent.combined_agent import CombinedAgent
-import time
-
 
 def main():
     print("=" * 50)

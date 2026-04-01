@@ -1,6 +1,7 @@
 """
-tests/test_integration.py — Full pipeline integration tests.
+Phase 4: Full pipeline integration tests.
 """
+
 import time
 from shared.types import Card, GameState, HAND_SIZE
 from game.game_loop import new_game, play_game, run_tournament

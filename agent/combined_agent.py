@@ -1,13 +1,12 @@
-# Phase 3
+# Phase 3 & 4
 """
 Combined agent: belief model + search + policy averaging.
 """
 
 from shared.types import GameState, Move
 from agent.belief import policy_average_search
-
-
 from agent.search import minimax_search
+
 
 class CombinedAgent:
     """
