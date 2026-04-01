@@ -7,6 +7,8 @@ from shared.types import GameState, Move
 from agent.belief import policy_average_search
 
 
+from agent.search import minimax_search
+
 class CombinedAgent:
     """
     Sequence AI agent that uses determinization and policy averaging.
@@ -17,9 +19,9 @@ class CombinedAgent:
         self.n_samples = n_samples
         self.depth = depth
 
-        # Use mock search until Phase 2's minimax is merged
+        # Default to real minimax_search
         if search_fn is None:
-            self.search_fn = self._mock_search
+            self.search_fn = minimax_search
         else:
             self.search_fn = search_fn
 
@@ -34,13 +36,5 @@ class CombinedAgent:
         if not avg_scores:
             return None
 
+        # Return the move with the highest average score
         return max(avg_scores, key=avg_scores.get)
-
-    @staticmethod
-    def _mock_search(state, depth, player):
-        """Placeholder: returns random scores for every legal move."""
-        from game.moves import get_legal_moves
-        import random
-
-        moves = get_legal_moves(state, player)
-        return {move: random.uniform(-10, 10) for move in moves}

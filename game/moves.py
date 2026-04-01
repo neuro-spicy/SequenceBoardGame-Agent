@@ -1,6 +1,6 @@
-# Phase 1
+
 """
-Functions for legal moves for a player and to identify dead cards.
+Phase 1: Functions for legal moves for a player and to identify dead cards.
 """
 
 from typing import Optional

@@ -1,6 +1,6 @@
-# Phase 1
+
 """
-Baseline random agent for testing and stress testing the game loop.
+Phase 1:random agent for testing the game loop.
 """
 
 import random
