@@ -55,7 +55,7 @@ def apply_move(state: GameState, move) -> int:
     elif move.move_type == "remove":
         state.remove_chip(r, c)
 
-    # Check for new sequences only if we PLACED a chip)
+    # Check for new sequences only if we PLACED a chip
     if move.move_type in ("place", "wild"):
         new_sequences = check_sequences(state, player)
         for seq in new_sequences:
@@ -75,9 +75,7 @@ def apply_move(state: GameState, move) -> int:
     return winner
 
 
-def play_game(
-    agent1, agent2, verbose: bool = False, max_turns: int = 500
-) -> int:
+def play_game(agent1, agent2, verbose: bool = False, max_turns: int = 500) -> int:
     """
     Runs a complete game between two agents.
     """

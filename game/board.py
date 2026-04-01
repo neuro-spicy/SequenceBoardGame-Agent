@@ -1,4 +1,5 @@
 """
+Phase 1
      BOARD_LAYOUT       - the fixed 10x10 grid
      CARD_TO_POSITIONS  - card to list of (row, col)
      POSITION_TO_CARD   - (row, col) to card (96 entries)

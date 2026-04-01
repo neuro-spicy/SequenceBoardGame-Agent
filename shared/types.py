@@ -1,6 +1,6 @@
-# Phase 1
+
 """
-Shared types and constants used by all modules.
+phase 1: Shared types and constants used by all modules.
 """
 
 from typing import NamedTuple
