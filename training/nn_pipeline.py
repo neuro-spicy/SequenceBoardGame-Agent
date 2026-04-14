@@ -1,11 +1,17 @@
 """
-training/nn_pipeline.py — Complete NN training pipeline.
+training/nn_pipeline.py — Continuous NN training pipeline.
 
-Generates heuristic-labeled data, trains CNN, tests the agent.
+Alternates between generating self-play data and retraining the CNN.
+Saves the model after every training round, so you can Ctrl+C at
+any time without losing progress.
+
 Run with: python -m training.nn_pipeline
 """
 
 import time
+import os
+import signal
+import sys
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -21,6 +27,9 @@ from agent.combined_agent import CombinedAgent
 from agent.nn_evaluator import (
     SequenceValueNet, encode_board, encode_hand, get_device
 )
+
+
+MODEL_PATH = "training/models/value_net_v2.pt"
 
 
 # ── Step 1: Generate Training Data ─────────────────────────────────
@@ -109,7 +118,17 @@ def train_model(boards, hands, scores, save_path, epochs=80):
 
     print(f"  Samples: {n_train} train, {n_val} val")
 
+    # Try to load existing model for fine-tuning
     model = SequenceValueNet().to(device)
+    if os.path.exists(save_path):
+        checkpoint = torch.load(save_path, map_location=device)
+        if "model_state" in checkpoint:
+            model.load_state_dict(checkpoint["model_state"])
+            print(f"  Loaded existing model for fine-tuning")
+        else:
+            model.load_state_dict(checkpoint)
+            print(f"  Loaded existing model for fine-tuning")
+
     params = sum(p.numel() for p in model.parameters())
     print(f"  Parameters: {params:,}")
 
@@ -144,6 +163,7 @@ def train_model(boards, hands, scores, save_path, epochs=80):
         scheduler.step(v_loss)
         if v_loss < best_val:
             best_val = v_loss
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
             torch.save({
                 "model_state": model.state_dict(),
                 "score_mean": score_mean,
@@ -161,40 +181,54 @@ def train_model(boards, hands, scores, save_path, epochs=80):
     print(f"  Saved to {save_path}")
 
 
-# ── Step 3: Test ────────────────────────────────────────────────────
+# ── Step 3: Quick Test ──────────────────────────────────────────────
 
 def test_nn_agent(model_path):
-    """Quick test: NN agent vs random."""
+    """Quick test: NN agent vs greedy."""
     from agent.nn_agent import NNAgent
 
     nn_agent = NNAgent(model_path=model_path, n_samples=3, depth=2)
-    wins = 0
+    greedy = GreedyAgent()
+    nn_wins = 0
     for i in range(10):
-        w = play_game(nn_agent, RandomAgent(), max_turns=300)
+        w = play_game(nn_agent, greedy, max_turns=300)
         if w == 1:
-            wins += 1
+            nn_wins += 1
         print(f"    Game {i+1}/10: {'WIN' if w == 1 else 'LOSS'}")
-    print(f"  NN vs Random: {wins}/10 wins")
-    return wins
+    print(f"  NN vs Greedy: {nn_wins}/10 wins")
+    return nn_wins
 
 
 # ── Main Pipeline ───────────────────────────────────────────────────
 
 def main():
     print("=" * 60)
-    print("NN Training Pipeline")
+    print("Continuous NN Training Pipeline")
     print("=" * 60)
+    print()
+    print("Press Ctrl+C at any time to stop.")
+    print("Model is saved after every training round.\n")
 
-    import os
     os.makedirs("training/models", exist_ok=True)
 
-    model_path = "training/models/value_net_v2.pt"
+    # Handle Ctrl+C gracefully
+    def handle_interrupt(sig, frame):
+        print(f"\n\nTraining interrupted after round {round_num}.")
+        print(f"Best model saved to {MODEL_PATH}")
+        sys.exit(0)
 
-    # Step 1: Generate data
-    print("\n--- Step 1: Generate training data ---")
-    start = time.time()
+    signal.signal(signal.SIGINT, handle_interrupt)
 
+    round_num = 0
     greedy = GreedyAgent()
+
+    # ── Round 1: Initial training from scratch ──────────────────
+    round_num = 1
+    print(f"\n{'='*60}")
+    print(f"Round {round_num}: Initial training (greedy + combined data)")
+    print(f"{'='*60}")
+
+    start = time.time()
     combined = CombinedAgent(n_samples=2, depth=2)
 
     b1, h1, s1 = generate_data(greedy, greedy, 3000, "greedy")
@@ -204,24 +238,50 @@ def main():
     all_hands = h1 + h2
     all_scores = s1 + s2
 
-    gen_time = time.time() - start
-    print(f"  Total: {len(all_scores)} samples in {gen_time/60:.1f} min")
+    print(f"  Total: {len(all_scores)} samples")
+    train_model(all_boards, all_hands, all_scores, MODEL_PATH, epochs=80)
 
-    # Step 2: Train
-    print("\n--- Step 2: Train CNN ---")
-    start = time.time()
-    train_model(all_boards, all_hands, all_scores, model_path, epochs=80)
-    train_time = time.time() - start
-    print(f"  Training time: {train_time/60:.1f} min")
+    elapsed = time.time() - start
+    print(f"  Round {round_num} complete in {elapsed/60:.1f} min")
 
-    # Step 3: Test
-    print("\n--- Step 3: Smoke test ---")
-    test_nn_agent(model_path)
+    # Quick test
+    print(f"\n--- Smoke test after round {round_num} ---")
+    test_nn_agent(MODEL_PATH)
 
-    print(f"\n{'='*60}")
-    print(f"Total: {(gen_time + train_time)/60:.1f} min")
-    print(f"Model: {model_path}")
-    print(f"{'='*60}")
+    # ── Rounds 2+: Continuous self-play improvement ─────────────
+    while True:
+        round_num += 1
+        print(f"\n{'='*60}")
+        print(f"Round {round_num}: Self-play improvement")
+        print(f"{'='*60}")
+
+        start = time.time()
+
+        # Load the current best model as an agent
+        from agent.nn_agent import NNAgent
+        nn_agent = NNAgent(model_path=MODEL_PATH, n_samples=2, depth=2)
+
+        # Generate new data: NN plays itself and vs greedy
+        b1, h1, s1 = generate_data(nn_agent, nn_agent, 1500, "NN self-play")
+        b2, h2, s2 = generate_data(nn_agent, greedy, 1000, "NN vs greedy")
+        b3, h3, s3 = generate_data(combined, greedy, 500, "combined vs greedy")
+
+        all_boards = b1 + b2 + b3
+        all_hands = h1 + h2 + h3
+        all_scores = s1 + s2 + s3
+
+        print(f"  Total: {len(all_scores)} new samples")
+
+        # Fine-tune the existing model (it loads the checkpoint)
+        train_model(all_boards, all_hands, all_scores, MODEL_PATH, epochs=40)
+
+        elapsed = time.time() - start
+        print(f"  Round {round_num} complete in {elapsed/60:.1f} min")
+
+        # Test every round
+        print(f"\n--- Test after round {round_num} ---")
+        wins = test_nn_agent(MODEL_PATH)
+        print(f"  Win rate vs Greedy: {wins}/10")
 
 
 if __name__ == "__main__":
