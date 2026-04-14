@@ -1,11 +1,11 @@
+# Phase 2
 """
-Phase 2: Heuristic Evaluation
-
-Scores a board state from the perspective of a given player.
+Vectorized sequence heuristic evaluation.
 """
 
+import numpy as np
 from shared.types import GameState, get_opponents, is_one_eyed_jack, is_two_eyed_jack
-from game.board import ALL_LINES
+from game.board import ALL_LINES, LINE_ROWS, LINE_COLS, POSITION_VALUES
 
 DEFAULT_WEIGHTS = {
     "sequence_progress": 1.0,
@@ -14,110 +14,70 @@ DEFAULT_WEIGHTS = {
     "jack_utility": 0.5,
 }
 
-def _build_position_values() -> dict[tuple[int, int], int]:
-    """
-    Precompute a map of how many 5-in-a-row lines pass through each cell.
-    Center cells participate in many lines (high value), edge cells in fewer.
-    """
-    values: dict[tuple[int, int], int] = {}
-    for line in ALL_LINES:
-        for pos in line:
-            values[pos] = values.get(pos, 0) + 1
-    return values
+SCORE_TABLE = np.array([0, 1, 5, 25, 125, 1000], dtype=np.float64)
 
-POSITION_VALUES = _build_position_values()
 
-def _score_sequence_progress(state: GameState, player: int) -> float:
-    """Score sequence progress based on how many chips are in each valid line."""
-    SCORES = {0: 0, 1: 1, 2: 5, 3: 25, 4: 125, 5: 1000}
-    total = 0
-    opponents = get_opponents(player)
+def _score_progress(board: np.ndarray, player: int, 
+                     opponents: list[int]) -> float:
+    line_chips = board[LINE_ROWS, LINE_COLS]  # (192, 5)
     
-    for line in ALL_LINES:
-        friendly = 0
-        blocked = False
-        for r, c in line:
-            chip = state.get_chip(r, c)
-            if chip == player or chip == -1:  # our chip or corner
-                friendly += 1
-            elif chip in opponents:
-                blocked = True
-                break
-            # else: empty, don't count
-        
-        if not blocked:
-            total += SCORES.get(friendly, 0)
+    friendly = (line_chips == player) | (line_chips == -1)
     
-    return float(total)
-
-def _score_opponent_threat(state: GameState, player: int) -> float:
-    """Score each opponent's progress and return the maximum threat."""
-    opponents = get_opponents(player)
-    max_threat = 0.0
+    blocked = np.zeros(len(ALL_LINES), dtype=bool)
     for opp in opponents:
-        threat = _score_sequence_progress(state, opp)
-        max_threat = max(max_threat, threat)
-    return max_threat
+        blocked |= (line_chips == opp).any(axis=1)
+    
+    counts = friendly.sum(axis=1)  # (192,)
+    counts[blocked] = 0
+    counts = np.clip(counts, 0, 5)
+    
+    return float(SCORE_TABLE[counts].sum())
 
-def _score_board_control(state: GameState, player: int) -> float:
-    """Score board control based on the value of cells occupied by the player."""
-    total = 0
-    for pos, value in POSITION_VALUES.items():
-        r, c = pos
-        chip = state.get_chip(r, c)
-        if chip == player:
-            total += value
-    return float(total)
 
-def _score_jack_utility(state: GameState, player: int) -> float:
-    """Score utility based on how valuable the Jacks in the player's hand are."""
+def _score_control(board: np.ndarray, player: int) -> float:
+    return float((POSITION_VALUES * (board == player)).sum())
+
+
+def _score_jacks(state: GameState, player: int,
+                  board: np.ndarray, opponents: list[int]) -> float:
     hand = state.hands.get(player, [])
     score = 0.0
-    opponents = get_opponents(player)
+    
+    has_one_eyed = any(is_one_eyed_jack(c) for c in hand)
+    threat = False
+    
+    if has_one_eyed:
+        line_chips = board[LINE_ROWS, LINE_COLS]
+        for opp in opponents:
+            opp_friendly = (line_chips == opp) | (line_chips == -1)
+            if (opp_friendly.sum(axis=1) >= 4).any():
+                threat = True
+                break
     
     for card in hand:
         if is_two_eyed_jack(card):
-            # Valuable when we have 4-in-a-row lines
-            score += 10
+            score += 10.0
         elif is_one_eyed_jack(card):
-            # Valuable when opponent has threatening lines
-            has_threat = False
-            for line in ALL_LINES:
-                opp_count = 0
-                for r, c in line:
-                    chip = state.get_chip(r, c)
-                    if chip in opponents or chip == -1:
-                        opp_count += 1
-                if opp_count >= 4:
-                    has_threat = True
-                    break
-            score += 15 if has_threat else 5
+            score += 15.0 if threat else 5.0
     
     return score
 
-import typing
 
-def evaluate(state: GameState, player: int, weights: typing.Optional[dict] = None) -> float:
-    """
-    Score a board state from the perspective of `player`.
-    
-    Positive = good for `player`
-    Negative = bad for `player`
-    Higher magnitude = more decisive advantage
-    """
+def evaluate(state: GameState, player: int, weights=None) -> float:
     if weights is None:
         weights = DEFAULT_WEIGHTS
     
-    progress = _score_sequence_progress(state, player)
-    threat = _score_opponent_threat(state, player)
-    control = _score_board_control(state, player)
-    jack = _score_jack_utility(state, player)
+    opponents = get_opponents(player)
+    board = state.chip_grid  # already numpy, no conversion needed
     
-    score = (
+    progress = _score_progress(board, player, opponents)
+    threat = _score_progress(board, opponents[0], [player])
+    control = _score_control(board, player)
+    jack = _score_jacks(state, player, board, opponents)
+    
+    return (
         weights["sequence_progress"] * progress
         - weights["opponent_threat"] * threat
         + weights["board_control"] * control
         + weights["jack_utility"] * jack
     )
-    
-    return score

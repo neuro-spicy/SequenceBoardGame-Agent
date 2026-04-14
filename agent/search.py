@@ -23,7 +23,7 @@ def _order_moves(state: GameState, moves: list[Move], player: int) -> list[Move]
         r, c = move.position
         if move.move_type == "place" or move.move_type == "wild":
             # Prefer moves near existing friendly chips and on high-value positions
-            return POSITION_VALUES.get((r, c), 0)
+            return int(POSITION_VALUES[r, c])
         elif move.move_type == "remove":
             # Prefer removing chips that are part of threats
             return 50  # removing is usually high priority

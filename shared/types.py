@@ -4,6 +4,7 @@ phase 1: Shared types and constants used by all modules.
 """
 
 from typing import NamedTuple
+import numpy as np
 
 
 class Card(NamedTuple):
@@ -138,11 +139,9 @@ class GameState:
 
     def __init__(self) -> None:
         # 10x10 board - corners set to -1, everything else 0
-        self.chip_grid: list[list[int]] = [
-            [EMPTY] * BOARD_SIZE for _ in range(BOARD_SIZE)
-        ]
+        self.chip_grid = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=np.int32)
         for r, c in CORNERS:
-            self.chip_grid[r][c] = CORNER_CHIP
+            self.chip_grid[r, c] = CORNER_CHIP
 
         self.hands: dict[int, list[Card]] = {}
         self.deck: list[Card] = []
@@ -152,15 +151,15 @@ class GameState:
 
     def get_chip(self, row: int, col: int) -> int:
         """Return the chip value at (row, col)."""
-        return self.chip_grid[row][col]
+        return int(self.chip_grid[row, col])
 
     def set_chip(self, row: int, col: int, player: int) -> None:
         """Place *player*'s chip at (row, col)."""
-        self.chip_grid[row][col] = player
+        self.chip_grid[row, col] = player
 
     def remove_chip(self, row: int, col: int) -> None:
         """Remove the chip at (row, col), setting it back to EMPTY."""
-        self.chip_grid[row][col] = EMPTY
+        self.chip_grid[row, col] = EMPTY
 
     def copy(self) -> "GameState":
         """
@@ -169,8 +168,8 @@ class GameState:
         Lists and dictionaries are duplicated to avoid accidental sharing.
         Cards and ints are shared safely because they cannot be changed.
         """
-        new = GameState()
-        new.chip_grid = [row[:] for row in self.chip_grid]
+        new = object.__new__(GameState)
+        new.chip_grid = self.chip_grid.copy()
         new.hands = {p: list(cards) for p, cards in self.hands.items()}
         new.deck = list(self.deck)
         new.discard_pile = list(self.discard_pile)

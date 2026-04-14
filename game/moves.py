@@ -36,7 +36,7 @@ def get_legal_moves(
         if is_two_eyed_jack(card):
             for r in range(BOARD_SIZE):
                 for c in range(BOARD_SIZE):
-                    if state.chip_grid[r][c] == 0:
+                    if state.chip_grid[r, c] == 0:
                         moves.append(Move(card, (r, c), "wild"))
 
         elif is_one_eyed_jack(card):
@@ -44,7 +44,7 @@ def get_legal_moves(
             for r in range(BOARD_SIZE):
                 for c in range(BOARD_SIZE):
                     if (
-                        state.chip_grid[r][c] in opponents
+                        int(state.chip_grid[r, c]) in opponents
                         and (r, c) not in state.completed_sequences
                     ):
                         moves.append(Move(card, (r, c), "remove"))
@@ -53,7 +53,7 @@ def get_legal_moves(
             positions = CARD_TO_POSITIONS.get(card, [])
             for pos in positions:
                 r, c = pos
-                if state.chip_grid[r][c] == 0:
+                if state.chip_grid[r, c] == 0:
                     moves.append(Move(card, pos, "place"))
 
     return moves
@@ -83,7 +83,7 @@ def get_dead_cards(
             continue
 
         all_occupied = all(
-            state.chip_grid[r][c] != 0 for r, c in positions
+            state.chip_grid[r, c] != 0 for r, c in positions
         )
         if all_occupied:
             dead.append(card)

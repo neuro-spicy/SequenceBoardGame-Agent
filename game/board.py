@@ -9,6 +9,7 @@ Phase 1
 
 from collections import Counter
 from shared.types import Card
+import numpy as np
 
 
 # None means free corner. Every non-Jack card appears exactly twice.
@@ -247,3 +248,19 @@ def validate_board_layout():
     assert sum(card_count.values()) == 96, "Expected 96 card cells"
 
     print("Board layout validation PASSED!")
+
+# Precomputed numpy arrays for fast line evaluation
+# LINE_ROWS[i] gives the 5 row indices for line i
+# LINE_COLS[i] gives the 5 col indices for line i
+# Used by the heuristic to evaluate all 192 lines at once
+
+LINE_ROWS = np.array([[pos[0] for pos in line] for line in ALL_LINES], 
+                       dtype=np.int32)  # shape (192, 5)
+LINE_COLS = np.array([[pos[1] for pos in line] for line in ALL_LINES], 
+                       dtype=np.int32)  # shape (192, 5)
+
+# Precomputed position values: how many lines pass through each cell
+POSITION_VALUES = np.zeros((10, 10), dtype=np.float64)
+for line in ALL_LINES:
+    for r, c in line:
+        POSITION_VALUES[r, c] += 1.0

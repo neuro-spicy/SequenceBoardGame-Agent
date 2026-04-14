@@ -6,7 +6,8 @@ Checks to determine if any player has won.
 """
 
 from shared.types import GameState, SEQUENCES_TO_WIN, NUM_PLAYERS
-from game.board import ALL_LINES
+import numpy as np
+from game.board import ALL_LINES, LINE_ROWS, LINE_COLS
 
 
 def check_sequences(state: GameState, player: int) -> list[tuple]:
@@ -15,16 +16,13 @@ def check_sequences(state: GameState, player: int) -> list[tuple]:
     5 player's chip or a corner wild -1 with 4 player's chip.
     Returns 5  sequence positions.
     """
+    line_chips = state.chip_grid[LINE_ROWS, LINE_COLS]  # (192, 5)
+    match = (line_chips == player) | (line_chips == -1)  # bool (192, 5)
+    complete_mask = match.all(axis=1)  # (192,) — True where all 5 match
+    
     completed = []
-    for line in ALL_LINES:
-        all_match = True
-        for r, c in line:
-            chip = state.get_chip(r, c)
-            if chip != player and chip != -1:
-                all_match = False
-                break
-        if all_match:
-            completed.append(line)
+    for i in np.where(complete_mask)[0]:
+        completed.append(ALL_LINES[i])
     return completed
 
 
