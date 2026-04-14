@@ -1,0 +1,32 @@
+{
+  "weights": {
+    "sequence_progress": 0.8672415003847623,
+    "opponent_threat": 0.9914382386550549,
+    "board_control": 0.2672098576701155,
+    "jack_utility": 0.5819442083502593
+  },
+  "history": [
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 0.8672415003847623,
+        "opponent_threat": 0.9914382386550549,
+        "board_control": 0.2672098576701155,
+        "jack_utility": 0.5819442083502593
+      },
+      "improved": true,
+      "time_seconds": 6.2
+    },
+    {
+      "generation": 2,
+      "best_weights": {
+        "sequence_progress": 0.8672415003847623,
+        "opponent_threat": 0.9914382386550549,
+        "board_control": 0.2672098576701155,
+        "jack_utility": 0.5819442083502593
+      },
+      "improved": false,
+      "time_seconds": 6.7
+    }
+  ]
+}
