@@ -14,7 +14,7 @@ class CombinedAgent:
     Same choose_move interface as RandomAgent.
     """
 
-    def __init__(self, n_samples=3, depth=3, search_fn=None):
+    def __init__(self, n_samples=5, depth=3, search_fn=None):
         self.n_samples = n_samples
         self.depth = depth
 
