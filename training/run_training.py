@@ -15,18 +15,17 @@ def main():
     print()
     
     # Training settings
-    # Use low agent settings for speed during training
-    # n_generations=10 with n_variants=4 = 40 matchups
-    # Each matchup = 20 games
-    # Total = ~800 games
+    # n_generations=20 with n_variants=6 = 120 matchups
+    # Each matchup = 50 games
+    # Total = ~6000 games — enough to discover strong weights
     best_weights, history = train_weights(
         initial_weights=DEFAULT_WEIGHTS.copy(),
-        n_generations=2,
-        n_variants=2,
-        games_per_match=2,
-        perturbation_range=0.2,
-        agent_n_samples=2,   # keep low for speed
-        agent_depth=2,       # keep low for speed
+        n_generations=20,
+        n_variants=6,
+        games_per_match=50,
+        perturbation_range=0.15,
+        agent_n_samples=2,
+        agent_depth=2,
     )
     
     # Save results

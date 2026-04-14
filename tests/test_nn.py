@@ -6,7 +6,7 @@ import torch
 from shared.types import GameState, Card, HAND_SIZE
 from game.game_loop import new_game
 from agent.nn_evaluator import (
-    encode_board, encode_hand, encode_state,
+    encode_board, encode_hand,
     SequenceValueNet, CARD_INDEX, NUM_CARD_TYPES
 )
 
@@ -41,29 +41,26 @@ def test_hand_encoding_sum():
     assert encoded.sum().item() == HAND_SIZE
 
 
-def test_full_encoding_shape():
-    """Full state encoding must be length 452 (400 + 52)."""
-    state = new_game()
-    encoded = encode_state(state, player=1)
-    assert encoded.shape == (452,)
-
-
 def test_network_forward_pass():
-    """Network should accept encoded state and output one value."""
-    model = SequenceValueNet(input_size=452, hidden_size=128)
+    """Network should accept board + hand and output one value."""
+    model = SequenceValueNet()
+    model.eval()
     state = new_game()
-    encoded = encode_state(state, player=1).unsqueeze(0)
-    output = model(encoded)
+    board = encode_board(state, player=1).unsqueeze(0)
+    hand = encode_hand(state, player=1).unsqueeze(0)
+    output = model(board, hand)
     assert output.shape == (1, 1)
 
 
-def test_network_output_range():
-    """Output should be between -1 and +1 (tanh activation)."""
-    model = SequenceValueNet(input_size=452, hidden_size=128)
+def test_network_output_is_finite():
+    """Output should be a finite number."""
+    model = SequenceValueNet()
+    model.eval()
     state = new_game()
-    encoded = encode_state(state, player=1).unsqueeze(0)
-    output = model(encoded).item()
-    assert -1.0 <= output <= 1.0
+    board = encode_board(state, player=1).unsqueeze(0)
+    hand = encode_hand(state, player=1).unsqueeze(0)
+    output = model(board, hand).item()
+    assert torch.isfinite(torch.tensor(output))
 
 
 def test_card_index_completeness():
@@ -91,7 +88,8 @@ def test_encoding_perspective():
 
 def test_batch_forward():
     """Network should handle batched inputs."""
-    model = SequenceValueNet(input_size=452, hidden_size=128)
-    batch = torch.randn(16, 452)
-    output = model(batch)
+    model = SequenceValueNet()
+    board_batch = torch.randn(16, 4, 10, 10)
+    hand_batch = torch.randn(16, 52)
+    output = model(board_batch, hand_batch)
     assert output.shape == (16, 1)

@@ -5,10 +5,13 @@ Plays many games, records (state_encoding, outcome) pairs.
 outcome = +1.0 if the current player at that state eventually won
 outcome = -1.0 if they lost
 outcome =  0.0 if draw
+
+Includes dataset merging utility for combining multiple sources.
 """
 
 import torch
 import random
+import os
 from shared.types import GameState
 from game.game_loop import new_game, apply_move
 from game.moves import get_legal_moves, get_dead_cards
@@ -115,7 +118,51 @@ def generate_dataset(
           f"0 (draws): {(labels_tensor == 0.0).sum().item()}")
     
     # Save to disk
+    os.makedirs(os.path.dirname(save_path), exist_ok=True)
     torch.save({"states": states_tensor, "labels": labels_tensor}, save_path)
     print(f"Saved to {save_path}")
+    
+    return states_tensor, labels_tensor
+
+
+def merge_datasets(
+    input_paths: list[str],
+    output_path: str = "training/models/training_data_merged.pt"
+) -> tuple:
+    """
+    Merge multiple .pt dataset files into one combined dataset.
+    
+    This lets us train on data from different agent matchups
+    (combined vs combined, combined vs greedy, NN self-play, etc.)
+    for a richer, more diverse training signal.
+    
+    Parameters:
+      input_paths — list of paths to .pt files to merge
+      output_path — where to save the merged dataset
+    
+    Returns:
+      (states_tensor, labels_tensor)
+    """
+    all_states = []
+    all_labels = []
+    
+    for path in input_paths:
+        data = torch.load(path)
+        all_states.append(data["states"])
+        all_labels.append(data["labels"])
+        print(f"  Loaded {len(data['states'])} samples from {path}")
+    
+    states_tensor = torch.cat(all_states)
+    labels_tensor = torch.cat(all_labels)
+    
+    print(f"\nMerged dataset: {len(states_tensor)} total samples")
+    print(f"  Label distribution: "
+          f"+1 (wins): {(labels_tensor == 1.0).sum().item()}, "
+          f"-1 (losses): {(labels_tensor == -1.0).sum().item()}, "
+          f"0 (draws): {(labels_tensor == 0.0).sum().item()}")
+    
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    torch.save({"states": states_tensor, "labels": labels_tensor}, output_path)
+    print(f"Saved merged dataset to {output_path}")
     
     return states_tensor, labels_tensor

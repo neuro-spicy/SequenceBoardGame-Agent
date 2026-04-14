@@ -1,10 +1,14 @@
 """
 training/nn_trainer.py — Train the SequenceValueNet.
+
+Improved with weight decay regularization and gradient clipping
+for more stable training on larger datasets.
 """
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import os
 from torch.utils.data import TensorDataset, DataLoader
 from agent.nn_evaluator import SequenceValueNet, get_device
 
@@ -71,14 +75,18 @@ def train_value_network(
     param_count = sum(p.numel() for p in model.parameters())
     print(f"Model parameters: {param_count:,}")
     
-    # Training setup
+    # Training setup — added weight decay for regularization
     criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+    optimizer = optim.Adam(
+        model.parameters(), lr=learning_rate, weight_decay=1e-4
+    )
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, patience=5, factor=0.5
     )
     
     best_val_loss = float('inf')
+    patience_counter = 0
+    early_stop_patience = 15  # stop if no improvement for 15 epochs
     
     # Training loop
     for epoch in range(epochs):
@@ -93,6 +101,10 @@ def train_value_network(
             predictions = model(batch_states)
             loss = criterion(predictions, batch_labels)
             loss.backward()
+            
+            # Gradient clipping for stable training
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            
             optimizer.step()
             
             train_loss += loss.item() * len(batch_states)
@@ -114,10 +126,14 @@ def train_value_network(
         val_loss /= n_val
         scheduler.step(val_loss)
         
-        # Save best model
+        # Save best model and track early stopping
         if val_loss < best_val_loss:
             best_val_loss = val_loss
+            patience_counter = 0
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
             torch.save(model.state_dict(), save_path)
+        else:
+            patience_counter += 1
         
         if (epoch + 1) % 5 == 0 or epoch == 0:
             lr = optimizer.param_groups[0]['lr']
@@ -126,6 +142,12 @@ def train_value_network(
                   f"Val: {val_loss:.4f} | "
                   f"LR: {lr:.6f} | "
                   f"{'*best*' if val_loss <= best_val_loss else ''}")
+        
+        # Early stopping — no point training if val loss plateaus
+        if patience_counter >= early_stop_patience:
+            print(f"\n  Early stopping at epoch {epoch+1} "
+                  f"(no improvement for {early_stop_patience} epochs)")
+            break
     
     print(f"\nTraining complete. Best val loss: {best_val_loss:.4f}")
     print(f"Model saved to {save_path}")
