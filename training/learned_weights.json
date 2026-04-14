@@ -1,32 +1,670 @@
 {
   "weights": {
-    "sequence_progress": 0.8672415003847623,
-    "opponent_threat": 0.9914382386550549,
-    "board_control": 0.2672098576701155,
-    "jack_utility": 0.5819442083502593
+    "sequence_progress": 3.7671422401336017,
+    "opponent_threat": 0.7170926146541253,
+    "board_control": 0.04052500345490747,
+    "jack_utility": 0.1321748403906213
   },
   "history": [
     {
       "generation": 1,
       "best_weights": {
-        "sequence_progress": 0.8672415003847623,
-        "opponent_threat": 0.9914382386550549,
-        "board_control": 0.2672098576701155,
-        "jack_utility": 0.5819442083502593
-      },
-      "improved": true,
-      "time_seconds": 6.2
-    },
-    {
-      "generation": 2,
-      "best_weights": {
-        "sequence_progress": 0.8672415003847623,
-        "opponent_threat": 0.9914382386550549,
-        "board_control": 0.2672098576701155,
-        "jack_utility": 0.5819442083502593
+        "sequence_progress": 1.0,
+        "opponent_threat": 1.2,
+        "board_control": 0.3,
+        "jack_utility": 0.5
       },
       "improved": false,
-      "time_seconds": 6.7
+      "time_seconds": 443.2
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.3356805131732268,
+        "opponent_threat": 1.627747553386219,
+        "board_control": 0.2807878526086886,
+        "jack_utility": 0.4777560922071924
+      },
+      "improved": true,
+      "time_seconds": 465.7
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.2747693025563092,
+        "opponent_threat": 1.2274046758950605,
+        "board_control": 0.2697738611791579,
+        "jack_utility": 0.36924332957124734
+      },
+      "improved": true,
+      "time_seconds": 441.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.459078766321158,
+        "opponent_threat": 1.4112119122833529,
+        "board_control": 0.2293850702980982,
+        "jack_utility": 0.42788927190907444
+      },
+      "improved": true,
+      "time_seconds": 439.5
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.3620905351923562,
+        "opponent_threat": 1.3233872199862318,
+        "board_control": 0.24217429254209674,
+        "jack_utility": 0.4091345846163547
+      },
+      "improved": true,
+      "time_seconds": 446.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 0.9540463979996449,
+        "opponent_threat": 1.3339953649581249,
+        "board_control": 0.19276097649277862,
+        "jack_utility": 0.4435533433936238
+      },
+      "improved": true,
+      "time_seconds": 460.8
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 0.911069864654807,
+        "opponent_threat": 1.6104860879750875,
+        "board_control": 0.17959718906209934,
+        "jack_utility": 0.43043099228659204
+      },
+      "improved": true,
+      "time_seconds": 454.8
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 0.94478378004393,
+        "opponent_threat": 1.4360281708585954,
+        "board_control": 0.21728870875597675,
+        "jack_utility": 0.28701560573258894
+      },
+      "improved": true,
+      "time_seconds": 459.4
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.0034170984903041,
+        "opponent_threat": 1.2220680009136593,
+        "board_control": 0.21733844279248762,
+        "jack_utility": 0.28222341801809486
+      },
+      "improved": true,
+      "time_seconds": 440.4
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.1443294324779227,
+        "opponent_threat": 1.153912292631112,
+        "board_control": 0.21452558202498648,
+        "jack_utility": 0.25184103453408174
+      },
+      "improved": true,
+      "time_seconds": 448.9
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.22549364804187,
+        "opponent_threat": 0.9835842506468597,
+        "board_control": 0.2039431328858088,
+        "jack_utility": 0.24107893141654865
+      },
+      "improved": true,
+      "time_seconds": 421.8
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.0623339185607283,
+        "opponent_threat": 0.9645808105727319,
+        "board_control": 0.2360640195567488,
+        "jack_utility": 0.22599610826054434
+      },
+      "improved": true,
+      "time_seconds": 435.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 0.9766138901811822,
+        "opponent_threat": 0.9980376389879503,
+        "board_control": 0.24544431916471354,
+        "jack_utility": 0.29747597935690323
+      },
+      "improved": true,
+      "time_seconds": 439.2
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.1763109040982407,
+        "opponent_threat": 0.9542030606170971,
+        "board_control": 0.24353273097195477,
+        "jack_utility": 0.2793293659778833
+      },
+      "improved": true,
+      "time_seconds": 429.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.3286113306987004,
+        "opponent_threat": 1.0775819635045643,
+        "board_control": 0.18735837615170084,
+        "jack_utility": 0.25651808042355295
+      },
+      "improved": true,
+      "time_seconds": 425.2
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.3651510426578457,
+        "opponent_threat": 1.0683026464180472,
+        "board_control": 0.21916658466972844,
+        "jack_utility": 0.20460980278909027
+      },
+      "improved": true,
+      "time_seconds": 427.7
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.4234507532838612,
+        "opponent_threat": 0.8742750849993951,
+        "board_control": 0.2131985362506461,
+        "jack_utility": 0.17438319506574376
+      },
+      "improved": true,
+      "time_seconds": 436.1
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.5456783938861596,
+        "opponent_threat": 0.8167422045699182,
+        "board_control": 0.20277516893057262,
+        "jack_utility": 0.16945589593864024
+      },
+      "improved": true,
+      "time_seconds": 429.2
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.6224452506478084,
+        "opponent_threat": 0.7142712092450834,
+        "board_control": 0.1930969054423545,
+        "jack_utility": 0.18665495438213853
+      },
+      "improved": true,
+      "time_seconds": 426.1
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.5282412363347093,
+        "opponent_threat": 0.6440217336625877,
+        "board_control": 0.2249293593398079,
+        "jack_utility": 0.20579769002687504
+      },
+      "improved": true,
+      "time_seconds": 414.3
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.9308859483181857,
+        "opponent_threat": 0.6806952512475607,
+        "board_control": 0.19112991381891015,
+        "jack_utility": 0.18990521900162838
+      },
+      "improved": true,
+      "time_seconds": 439.9
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.347225382527744,
+        "opponent_threat": 0.7263348187734483,
+        "board_control": 0.157999206328696,
+        "jack_utility": 0.16699136373348997
+      },
+      "improved": true,
+      "time_seconds": 412.2
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.8890936595783947,
+        "opponent_threat": 0.9311275151407535,
+        "board_control": 0.11221931334848011,
+        "jack_utility": 0.1571703666484381
+      },
+      "improved": true,
+      "time_seconds": 420.6
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.7945782678401445,
+        "opponent_threat": 1.026341705995636,
+        "board_control": 0.08400356140086664,
+        "jack_utility": 0.20533890222494106
+      },
+      "improved": true,
+      "time_seconds": 414.8
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.8686897576315062,
+        "opponent_threat": 1.3518409745446516,
+        "board_control": 0.08067844345511435,
+        "jack_utility": 0.17121393253785555
+      },
+      "improved": true,
+      "time_seconds": 431.1
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.6132997852587132,
+        "opponent_threat": 1.38816804060475,
+        "board_control": 0.0822610869045625,
+        "jack_utility": 0.1852738849483346
+      },
+      "improved": true,
+      "time_seconds": 445.4
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.8347281372914463,
+        "opponent_threat": 2.0214153644887514,
+        "board_control": 0.08622561860616212,
+        "jack_utility": 0.14321161895061063
+      },
+      "improved": true,
+      "time_seconds": 442.5
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.904576338567536,
+        "opponent_threat": 2.2286390775996274,
+        "board_control": 0.07089375605977029,
+        "jack_utility": 0.1699755571424611
+      },
+      "improved": true,
+      "time_seconds": 441.1
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.6490331884104552,
+        "opponent_threat": 2.088207990741466,
+        "board_control": 0.060158054889844347,
+        "jack_utility": 0.15221570752361507
+      },
+      "improved": true,
+      "time_seconds": 435.8
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.992122666929656,
+        "opponent_threat": 1.4817905152042763,
+        "board_control": 0.06430154420947463,
+        "jack_utility": 0.14407550881869516
+      },
+      "improved": true,
+      "time_seconds": 447.5
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.331306404946371,
+        "opponent_threat": 1.5106441109160889,
+        "board_control": 0.05498716962859774,
+        "jack_utility": 0.1412488208062757
+      },
+      "improved": true,
+      "time_seconds": 414.3
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.1412045997089124,
+        "opponent_threat": 1.348769465360953,
+        "board_control": 0.05300005039599745,
+        "jack_utility": 0.15864137408914672
+      },
+      "improved": true,
+      "time_seconds": 432.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.7817814605063214,
+        "opponent_threat": 1.4064793216316889,
+        "board_control": 0.0485794197756036,
+        "jack_utility": 0.21388077417788418
+      },
+      "improved": true,
+      "time_seconds": 428.6
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.7525717104126017,
+        "opponent_threat": 1.2870912832471202,
+        "board_control": 0.04515053999275435,
+        "jack_utility": 0.18167419818261604
+      },
+      "improved": true,
+      "time_seconds": 436.9
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.492446965630032,
+        "opponent_threat": 1.242621987431615,
+        "board_control": 0.04101557871898208,
+        "jack_utility": 0.18089767947504826
+      },
+      "improved": true,
+      "time_seconds": 442.3
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.6785972858664908,
+        "opponent_threat": 1.3933754607518856,
+        "board_control": 0.03988382473827083,
+        "jack_utility": 0.14713701561717338
+      },
+      "improved": true,
+      "time_seconds": 453.7
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.7832694738902521,
+        "opponent_threat": 1.2474465281927845,
+        "board_control": 0.04130078773443369,
+        "jack_utility": 0.13588706974236378
+      },
+      "improved": true,
+      "time_seconds": 414.4
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.041853392913023,
+        "opponent_threat": 1.0942842312703658,
+        "board_control": 0.040437354105154276,
+        "jack_utility": 0.15163537421915566
+      },
+      "improved": true,
+      "time_seconds": 429.8
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.2590616955364418,
+        "opponent_threat": 0.8611533529520483,
+        "board_control": 0.02955852470377415,
+        "jack_utility": 0.17900957135889398
+      },
+      "improved": true,
+      "time_seconds": 435.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.0618647732146442,
+        "opponent_threat": 0.7916816019225575,
+        "board_control": 0.03623608650374921,
+        "jack_utility": 0.203335928492026
+      },
+      "improved": true,
+      "time_seconds": 425.1
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 1.9493069674258372,
+        "opponent_threat": 0.6551892855115032,
+        "board_control": 0.03312929010113698,
+        "jack_utility": 0.18831251196357793
+      },
+      "improved": true,
+      "time_seconds": 430.7
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.577797778913858,
+        "opponent_threat": 0.7824480094929269,
+        "board_control": 0.03311239369173352,
+        "jack_utility": 0.1590069310970685
+      },
+      "improved": true,
+      "time_seconds": 428.5
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.2970515358967303,
+        "opponent_threat": 0.6742916552225692,
+        "board_control": 0.034762636534149946,
+        "jack_utility": 0.13962681884015948
+      },
+      "improved": true,
+      "time_seconds": 425.2
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.130876810572635,
+        "opponent_threat": 0.7357624355962997,
+        "board_control": 0.030594113197752112,
+        "jack_utility": 0.16649691623485346
+      },
+      "improved": true,
+      "time_seconds": 431.9
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.160022519714468,
+        "opponent_threat": 0.6555652485889483,
+        "board_control": 0.02976794709524307,
+        "jack_utility": 0.1679905810043076
+      },
+      "improved": true,
+      "time_seconds": 421.9
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.177663718527771,
+        "opponent_threat": 0.7257453602141456,
+        "board_control": 0.03198123370318877,
+        "jack_utility": 0.20095130149003776
+      },
+      "improved": true,
+      "time_seconds": 423.4
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 2.493719238010924,
+        "opponent_threat": 0.6807143305606633,
+        "board_control": 0.028751409132349026,
+        "jack_utility": 0.20467796213495143
+      },
+      "improved": true,
+      "time_seconds": 421.5
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.136042971846168,
+        "opponent_threat": 0.8447088454933308,
+        "board_control": 0.02428402125120485,
+        "jack_utility": 0.18680677641193957
+      },
+      "improved": true,
+      "time_seconds": 424.2
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.6124388946877226,
+        "opponent_threat": 0.7253048201059528,
+        "board_control": 0.027012703623135355,
+        "jack_utility": 0.15026321459146622
+      },
+      "improved": true,
+      "time_seconds": 421.6
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.3762439432971303,
+        "opponent_threat": 0.6584292906678052,
+        "board_control": 0.02305692156322788,
+        "jack_utility": 0.13913595745508325
+      },
+      "improved": true,
+      "time_seconds": 426.6
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.6253166394304075,
+        "opponent_threat": 0.6909051711240316,
+        "board_control": 0.022213545448270585,
+        "jack_utility": 0.11802201554666529
+      },
+      "improved": true,
+      "time_seconds": 425.8
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.4214925566326526,
+        "opponent_threat": 0.7287638743737085,
+        "board_control": 0.021120259342807056,
+        "jack_utility": 0.14225574536522254
+      },
+      "improved": true,
+      "time_seconds": 411.9
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 4.023958401617961,
+        "opponent_threat": 0.7962329930792543,
+        "board_control": 0.0243443212433723,
+        "jack_utility": 0.15527394241235906
+      },
+      "improved": true,
+      "time_seconds": 422.5
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 4.232751965465406,
+        "opponent_threat": 0.6630532538174642,
+        "board_control": 0.02076500528901857,
+        "jack_utility": 0.19588124299070384
+      },
+      "improved": true,
+      "time_seconds": 440.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 5.023990272922757,
+        "opponent_threat": 0.7161162980558423,
+        "board_control": 0.024089697077659573,
+        "jack_utility": 0.21218939778372928
+      },
+      "improved": true,
+      "time_seconds": 439.3
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 5.023990272922757,
+        "opponent_threat": 0.7161162980558423,
+        "board_control": 0.024089697077659573,
+        "jack_utility": 0.21218939778372928
+      },
+      "improved": false,
+      "time_seconds": 435.3
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.594895172853109,
+        "opponent_threat": 0.7808744175893338,
+        "board_control": 0.026587281231877917,
+        "jack_utility": 0.17158014818992284
+      },
+      "improved": true,
+      "time_seconds": 426.3
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.080651898367012,
+        "opponent_threat": 0.7258474272607323,
+        "board_control": 0.03234027264077239,
+        "jack_utility": 0.16062018990993482
+      },
+      "improved": true,
+      "time_seconds": 421.6
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.475653364012772,
+        "opponent_threat": 0.7031753194231533,
+        "board_control": 0.03706403962938123,
+        "jack_utility": 0.14788455270238077
+      },
+      "improved": true,
+      "time_seconds": 420.0
+    },
+    {
+      "generation": 1,
+      "best_weights": {
+        "sequence_progress": 3.7671422401336017,
+        "opponent_threat": 0.7170926146541253,
+        "board_control": 0.04052500345490747,
+        "jack_utility": 0.1321748403906213
+      },
+      "improved": true,
+      "time_seconds": 427.1
     }
   ]
 }

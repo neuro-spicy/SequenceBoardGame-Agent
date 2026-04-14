@@ -7,6 +7,7 @@ Press Ctrl+C at any time to stop — the latest best weights are
 already saved to training/learned_weights.json.
 """
 
+import json
 import signal
 import sys
 from training.self_play import train_weights, save_learned_weights
@@ -21,14 +22,22 @@ def main():
     print("Press Ctrl+C at any time to stop.")
     print("Weights are saved after every generation.\n")
     
-    # Start from the hand-tuned defaults
-    print(f"Starting weights: {DEFAULT_WEIGHTS}")
+    # Load previous best weights instead of starting from defaults
+    try:
+        with open("training/learned_weights.json") as f:
+            data = json.load(f)
+        best_weights = data["weights"]
+        all_history = data.get("history", [])
+        # Resume the generation count based on history if available
+        generation = len(all_history)
+        print(f"Resuming from generation {generation} with weights: {best_weights}")
+    except (FileNotFoundError, json.JSONDecodeError):
+        best_weights = DEFAULT_WEIGHTS.copy()
+        all_history = []
+        generation = 0
+        print("No previous weights found, starting fresh")
+        
     print()
-    
-    # Track best weights across the entire run
-    best_weights = DEFAULT_WEIGHTS.copy()
-    all_history = []
-    generation = 0
     
     # Handle Ctrl+C gracefully
     def handle_interrupt(sig, frame):

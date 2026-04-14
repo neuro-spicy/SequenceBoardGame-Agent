@@ -80,7 +80,7 @@ def generate_data(agent1, agent2, n_games, label=""):
 
 # ── Step 2: Train the CNN ───────────────────────────────────────────
 
-def train_model(boards, hands, scores, save_path, epochs=80):
+def train_model(boards, hands, scores, save_path, epochs=80, resume=False):
     """Train SequenceValueNet on heuristic-labeled data."""
     device = get_device()
     print(f"\n  Training on {device}...")
@@ -133,7 +133,8 @@ def train_model(boards, hands, scores, save_path, epochs=80):
     print(f"  Parameters: {params:,}")
 
     criterion = nn.MSELoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    lr = 0.0005 if resume else 0.001
+    optimizer = optim.Adam(model.parameters(), lr=lr)
     scheduler = optim.lr_scheduler.ReduceLROnPlateau(
         optimizer, patience=8, factor=0.5
     )
@@ -231,15 +232,27 @@ def main():
     start = time.time()
     combined = CombinedAgent(n_samples=2, depth=2)
 
-    b1, h1, s1 = generate_data(greedy, greedy, 3000, "greedy")
-    b2, h2, s2 = generate_data(combined, greedy, 2000, "combined")
+    data_save_path = "training/models/round1_data.pt"
+    if os.path.exists(data_save_path):
+        print(f"  Loading Round 1 data from {data_save_path}")
+        data = torch.load(data_save_path)
+        all_boards, all_hands, all_scores = data["boards"], data["hands"], data["scores"]
+    else:
+        b1, h1, s1 = generate_data(greedy, greedy, 3000, "greedy")
+        b2, h2, s2 = generate_data(combined, greedy, 2000, "combined")
 
-    all_boards = b1 + b2
-    all_hands = h1 + h2
-    all_scores = s1 + s2
+        all_boards = b1 + b2
+        all_hands = h1 + h2
+        all_scores = s1 + s2
+        
+        torch.save({
+            "boards": all_boards,
+            "hands": all_hands,
+            "scores": all_scores
+        }, data_save_path)
 
     print(f"  Total: {len(all_scores)} samples")
-    train_model(all_boards, all_hands, all_scores, MODEL_PATH, epochs=80)
+    train_model(all_boards, all_hands, all_scores, MODEL_PATH, epochs=80, resume=os.path.exists(MODEL_PATH))
 
     elapsed = time.time() - start
     print(f"  Round {round_num} complete in {elapsed/60:.1f} min")
@@ -273,7 +286,7 @@ def main():
         print(f"  Total: {len(all_scores)} new samples")
 
         # Fine-tune the existing model (it loads the checkpoint)
-        train_model(all_boards, all_hands, all_scores, MODEL_PATH, epochs=40)
+        train_model(all_boards, all_hands, all_scores, MODEL_PATH, epochs=40, resume=True)
 
         elapsed = time.time() - start
         print(f"  Round {round_num} complete in {elapsed/60:.1f} min")
