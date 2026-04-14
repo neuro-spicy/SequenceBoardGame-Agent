@@ -1,5 +1,6 @@
+# Phase 5
 """
-agent/greedy_agent.py — Greedy heuristic agent.
+Greedy heuristic agent.
 
 Picks the move with the best immediate heuristic score.
 No search, no belief model, no lookahead.

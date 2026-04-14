@@ -1,3 +1,8 @@
+# Phase 5
+"""
+Tests for the greedy heuristic agent.
+"""
+
 from shared.types import Card, GameState
 from game.game_loop import new_game, play_game
 from game.moves import get_legal_moves

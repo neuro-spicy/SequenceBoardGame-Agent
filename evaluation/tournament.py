@@ -1,5 +1,6 @@
+# Phase 5
 """
-evaluation/tournament.py — Tournament runner and results collector.
+Tournament runner and results collector.
 
 Runs any-vs-any agent tournaments and stores results in a 
 structured format for analysis and reporting.

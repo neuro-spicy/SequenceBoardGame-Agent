@@ -1,4 +1,7 @@
-# evaluation/run_baselines.py
+# Phase 5
+"""
+Baseline tournament runner and results collection.
+"""
 
 from game.agents.random_agent import RandomAgent
 from agent.combined_agent import CombinedAgent
