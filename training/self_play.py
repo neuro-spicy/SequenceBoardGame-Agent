@@ -231,6 +231,7 @@ def save_learned_weights(weights: dict, history: list) -> None:
         "history": history,
     }
     path = os.path.join("training", "learned_weights.json")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
         json.dump(output, f, indent=2)
     print(f"Saved to {path}")

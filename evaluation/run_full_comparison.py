@@ -2,12 +2,13 @@
 evaluation/run_full_comparison.py — All agents tournament.
 """
 
+import os
 import json
 from game.agents.random_agent import RandomAgent
 from agent.greedy_agent import GreedyAgent
 from agent.combined_agent import CombinedAgent
 from agent.nn_agent import NNAgent
-from evaluation.tournament import run_full_evaluation, print_summary_table
+from evaluation.tournament import run_full_evaluation, print_summary_table, save_results
 import agent.heuristic as h
 
 
@@ -55,6 +56,13 @@ def main():
     print(f"\nRunning tournament with {len(agents)} agents...")
     results = run_full_evaluation(agents, n_games=50)
     print_summary_table(results)
+
+    # Save results
+    os.makedirs("evaluation/results", exist_ok=True)
+    for r in results:
+        fn = (f"final_{r['agent1']}_vs_{r['agent2']}.json"
+              .replace(" ", "_").replace("(", "").replace(")", ""))
+        save_results(r, f"evaluation/results/{fn}")
 
 
 if __name__ == "__main__":
