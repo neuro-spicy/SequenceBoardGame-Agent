@@ -54,7 +54,7 @@ def main():
 
     # run all matchups
     print(f"\nRunning tournament with {len(agents)} agents...")
-    results = run_full_evaluation(agents, n_games=50)
+    results = run_full_evaluation(agents, n_games=100)
     print_summary_table(results)
 
     # save results
@@ -62,7 +62,7 @@ def main():
     for r in results:
         fn = (f"final_{r['agent1']}_vs_{r['agent2']}.json"
               .replace(" ", "_").replace("(", "").replace(")", ""))
-        save_results(r, f"evaluation/results/{fn}")
+        save_results(r, fn)
 
 
 if __name__ == "__main__":

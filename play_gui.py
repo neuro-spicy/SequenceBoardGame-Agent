@@ -17,7 +17,6 @@ from agent.combined_agent import CombinedAgent
 from agent.search import minimax_search_with_eval
 from agent.heuristic import evaluate
 
-# ── layout ────────────────────────────────────────────────────────────────────
 CELL  = 56
 BSIZE = BOARD_SIZE * CELL          # 560
 PW    = 220                        # panel width
@@ -25,7 +24,6 @@ PAD   = 10
 WIN_W = PAD + BSIZE + PAD + PW + PAD   # 810
 WIN_H = PAD + BSIZE + PAD              # 580
 
-# ── colours (RGB) ─────────────────────────────────────────────────────────────
 BG       = (55,  71,  79)
 PANEL    = (69,  90, 100)
 DARKER   = (38,  50,  56)
@@ -47,7 +45,6 @@ TXT_DIM = (120,144,156);  TXT_BRIGHT=(255,255,255)
 AGENTS = ["Human","Random","Greedy","Combined","RL-tuned","NN Agent"]
 SUIT_SYM = {"spades":"S","hearts":"H","diamonds":"D","clubs":"C"}
 
-# ── agent factory ─────────────────────────────────────────────────────────────
 def make_agent(name):
     if name == "Human":    return None
     if name == "Random":   return RandomAgent()
@@ -71,7 +68,6 @@ def make_agent(name):
         return GreedyAgent()
     return None
 
-# ── pygame helpers ────────────────────────────────────────────────────────────
 def draw_rect_rounded(surf, color, rect, r=6, border=0, border_color=None):
     pygame.draw.rect(surf, color, rect, border_radius=r)
     if border:
@@ -95,7 +91,6 @@ def button(surf, text, font, rect, color=BTN, text_color=WHITE,
     draw_text(surf, text, font, text_color, rect)
     return pygame.Rect(rect)
 
-# ── main app ──────────────────────────────────────────────────────────────────
 class App:
     def __init__(self):
         pygame.init()
@@ -111,7 +106,6 @@ class App:
         self.f_card  = pygame.font.SysFont("Courier", 11, bold=True)
         self.f_nav   = pygame.font.SysFont("Arial",   18, bold=True)
 
-        # ── game state ────────────────────────────────────────────────────────
         self.screen_state = "MODE"   # "MODE" or "GAME"
         self.p1_idx = 0              # index into AGENTS
         self.p2_idx = 3             # "Combined" default
@@ -136,7 +130,6 @@ class App:
 
         self.run()
 
-    # ── main loop ─────────────────────────────────────────────────────────────
     def run(self):
         while True:
             mouse_pos = pygame.mouse.get_pos()
@@ -168,7 +161,6 @@ class App:
             pygame.display.flip()
             self.clock.tick(30)
 
-    # ── mode selection screen ─────────────────────────────────────────────────
     def draw_mode(self, mouse_pos):
         surf = self.screen
         cx = WIN_W // 2
@@ -226,7 +218,6 @@ class App:
         elif pygame.Rect(WIN_W//2-90, 360, 180, 46).collidepoint(pos):
             self.start_game()
 
-    # ── start / new game ──────────────────────────────────────────────────────
     def start_game(self):
         self._gen += 1
         self.p1_name = AGENTS[self.p1_idx]
@@ -253,7 +244,6 @@ class App:
         self.sel_card = None; self.valid_pos = set(); self.legal_sel = []
         self.screen_state = "MODE"
 
-    # ── game screen ───────────────────────────────────────────────────────────
     def draw_game(self, mouse_pos):
         self.draw_board()
         self.draw_panel(mouse_pos)
@@ -426,7 +416,6 @@ class App:
         hov  = ng_r.collidepoint(mouse_pos)
         button(surf, "New Game", self.f_small, ng_r, color=BTN, hovered=hov)
 
-    # ── click handling ────────────────────────────────────────────────────────
     def on_click(self, pos):
         if self.screen_state == "MODE":
             self._mode_click(pos)
@@ -477,7 +466,6 @@ class App:
         cy = py + 10 + 22 + 20 + 18 + 8 + 18   # after header items + sep + "Hand" label
         return cy
 
-    # ── board / card interaction ──────────────────────────────────────────────
     def _board_click(self, r, c):
         if (not self.states or not self.at_live or self.thinking
                 or self.over or self.live.current_player not in self.humans):
@@ -516,7 +504,6 @@ class App:
         self.idx = len(self.states)-1
         return winner
 
-    # ── AI ────────────────────────────────────────────────────────────────────
     def trigger_ai(self, gen):
         if gen != self._gen or self.over or not self.at_live: return
         pl = self.live.current_player
@@ -556,7 +543,6 @@ class App:
         self.states.append(ns); self.moves.append("(skipped)"); self.idx = len(self.states)-1
         if self.auto: self.trigger_ai(self._gen)
 
-    # ── navigation ────────────────────────────────────────────────────────────
     def _nav_can(self, tag):
         if tag in ("first","prev"): return self.idx > 0
         if tag in ("next","last"):  return self.idx < len(self.states)-1
@@ -577,7 +563,6 @@ class App:
         if self.auto and self.at_live and not self.thinking and not self.over:
             self.trigger_ai(self._gen)
 
-    # ── helpers ───────────────────────────────────────────────────────────────
     @property
     def live(self):    return self.states[-1]
     @property
