@@ -1,8 +1,10 @@
 """
-Phase 1
+game/board.py — fixed 10x10 board layout and precomputed lookups.
+
+exports:
      BOARD_LAYOUT       - the fixed 10x10 grid
-     CARD_TO_POSITIONS  - card to list of (row, col)
-     POSITION_TO_CARD   - (row, col) to card (96 entries)
+     CARD_TO_POSITIONS  - card -> list of (row, col)
+     POSITION_TO_CARD   - (row, col) -> card (96 entries)
      ALL_LINES          - every possible 5-in-a-row (192 total)
      validate_board_layout()  - checks the layout is correct
 """
@@ -12,10 +14,10 @@ from shared.types import Card
 import numpy as np
 
 
-# None means free corner. Every non-Jack card appears exactly twice.
+# None means free corner — every non-jack card appears exactly twice
 
 BOARD_LAYOUT = [
-    # Row 0
+    # row 0
     [
         None,
         Card("2", "spades"),
@@ -28,7 +30,7 @@ BOARD_LAYOUT = [
         Card("9", "spades"),
         None,
     ],
-    # Row 1
+    # row 1
     [
         Card("6", "clubs"),
         Card("5", "clubs"),
@@ -41,7 +43,7 @@ BOARD_LAYOUT = [
         Card("10", "hearts"),
         Card("10", "spades"),
     ],
-    # Row 2
+    # row 2
     [
         Card("7", "clubs"),
         Card("A", "spades"),
@@ -54,7 +56,7 @@ BOARD_LAYOUT = [
         Card("9", "hearts"),
         Card("Q", "spades"),
     ],
-    # Row 3
+    # row 3
     [
         Card("8", "clubs"),
         Card("K", "spades"),
@@ -67,7 +69,7 @@ BOARD_LAYOUT = [
         Card("8", "hearts"),
         Card("K", "spades"),
     ],
-    # Row 4
+    # row 4
     [
         Card("9", "clubs"),
         Card("Q", "spades"),
@@ -80,7 +82,7 @@ BOARD_LAYOUT = [
         Card("7", "hearts"),
         Card("A", "spades"),
     ],
-    # Row 5
+    # row 5
     [
         Card("10", "clubs"),
         Card("10", "spades"),
@@ -93,7 +95,7 @@ BOARD_LAYOUT = [
         Card("6", "hearts"),
         Card("2", "diamonds"),
     ],
-    # Row 6
+    # row 6
     [
         Card("Q", "clubs"),
         Card("9", "spades"),
@@ -106,7 +108,7 @@ BOARD_LAYOUT = [
         Card("5", "hearts"),
         Card("3", "diamonds"),
     ],
-    # Row 7
+    # row 7
     [
         Card("K", "clubs"),
         Card("8", "spades"),
@@ -119,7 +121,7 @@ BOARD_LAYOUT = [
         Card("4", "hearts"),
         Card("4", "diamonds"),
     ],
-    # Row 8
+    # row 8
     [
         Card("A", "clubs"),
         Card("7", "spades"),
@@ -132,7 +134,7 @@ BOARD_LAYOUT = [
         Card("3", "hearts"),
         Card("5", "diamonds"),
     ],
-    # Row 9
+    # row 9
     [
         None,
         Card("A", "diamonds"),
@@ -149,9 +151,9 @@ BOARD_LAYOUT = [
 
 
 def _build_lookups():
-    """Create two lookup dictionaries from the board layout.
+    """create two lookup dicts from the board layout.
     card_to_pos:  find which two cells a card sits on.
-    pos_to_card:  find which card is on that cell.
+    pos_to_card:  find which card is on a given cell.
     """
     card_to_pos = {}
     pos_to_card = {}
@@ -175,34 +177,33 @@ def _build_all_lines():
     """
     compute every possible sequence of 5 on the 10x10 board.
 
-    Checks 4 directions from every starting cell:
-        Horizontal:       (r, c) to (r, c+4)
-        Vertical:         (r, c) to (r+4, c)
-        Diagonal right:   (r, c) to (r+4, c+4)
-        Diagonal left:    (r, c) to (r+4, c-4)
-
+    checks 4 directions from every starting cell:
+        horizontal:       (r, c) to (r, c+4)
+        vertical:         (r, c) to (r+4, c)
+        diagonal right:   (r, c) to (r+4, c+4)
+        diagonal left:    (r, c) to (r+4, c-4)
     """
     lines = []
 
     for r in range(10):
         for c in range(10):
 
-            # Horizontal
+            # horizontal
             if c + 4 <= 9:
                 line = ((r, c), (r, c+1), (r, c+2), (r, c+3), (r, c+4))
                 lines.append(line)
 
-            # Vertical
+            # vertical
             if r + 4 <= 9:
                 line = ((r, c), (r+1, c), (r+2, c), (r+3, c), (r+4, c))
                 lines.append(line)
 
-            # Diagonal down-right
+            # diagonal down-right
             if r + 4 <= 9 and c + 4 <= 9:
                 line = ((r, c), (r+1, c+1), (r+2, c+2), (r+3, c+3), (r+4, c+4))
                 lines.append(line)
 
-            # Diagonal down-left
+            # diagonal down-left
             if r + 4 <= 9 and c - 4 >= 0:
                 line = ((r, c), (r+1, c-1), (r+2, c-2), (r+3, c-3), (r+4, c-4))
                 lines.append(line)
@@ -215,11 +216,10 @@ ALL_LINES = _build_all_lines()
 
 def validate_board_layout():
     """
-
-    Checks:
-        - Exactly 4 None corners at (0,0), (0,9), (9,0), (9,9)
-        - No Jacks on the board
-        - Every other card appears exactly twice
+    checks:
+        - exactly 4 None corners at (0,0), (0,9), (9,0), (9,9)
+        - no jacks on the board
+        - every other card appears exactly twice
         - 96 card cells total
     """
     card_count = Counter()
@@ -233,33 +233,34 @@ def validate_board_layout():
             else:
                 card_count[card] += 1
 
-    # Check corners
+    # check corners
     assert none_count == 4, f"Expected 4 corners, got {none_count}"
 
-    # Check no Jacks
+    # check no jacks
     for card in card_count:
         assert card.rank != "J", f"Jack found on board: {card}"
 
-    # Check each card appears exactly twice
+    # check each card appears exactly twice
     for card, count in card_count.items():
         assert count == 2, f"{card} appears {count} times, expected 2"
 
-    # Check total
+    # check total
     assert sum(card_count.values()) == 96, "Expected 96 card cells"
 
     print("Board layout validation PASSED!")
 
-# Precomputed numpy arrays for fast line evaluation
+
+# precomputed numpy arrays for fast line evaluation
 # LINE_ROWS[i] gives the 5 row indices for line i
 # LINE_COLS[i] gives the 5 col indices for line i
-# Used by the heuristic to evaluate all 192 lines at once
+# used by the heuristic to evaluate all 192 lines at once
 
-LINE_ROWS = np.array([[pos[0] for pos in line] for line in ALL_LINES], 
-                       dtype=np.int32)  # shape (192, 5)
-LINE_COLS = np.array([[pos[1] for pos in line] for line in ALL_LINES], 
-                       dtype=np.int32)  # shape (192, 5)
+LINE_ROWS = np.array([[pos[0] for pos in line] for line in ALL_LINES],
+                      dtype=np.int32)  # shape (192, 5)
+LINE_COLS = np.array([[pos[1] for pos in line] for line in ALL_LINES],
+                      dtype=np.int32)  # shape (192, 5)
 
-# Precomputed position values: how many lines pass through each cell
+# precomputed position values: how many lines pass through each cell
 POSITION_VALUES = np.zeros((10, 10), dtype=np.float64)
 for line in ALL_LINES:
     for r, c in line:

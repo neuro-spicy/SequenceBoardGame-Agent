@@ -1,5 +1,5 @@
 """
-evaluation/run_full_comparison.py — All agents tournament.
+evaluation/run_full_comparison.py — full tournament across all agents.
 """
 
 import os
@@ -17,7 +17,7 @@ def main():
     print("Full Agent Comparison Tournament")
     print("=" * 60)
 
-    # Load RL weights
+    # load RL weights if available
     try:
         with open("training/learned_weights.json") as f:
             rl_data = json.load(f)
@@ -27,14 +27,14 @@ def main():
         print("No RL weights found, skipping RL agent")
         rl_weights = None
 
-    # Build agents
+    # build agent pool
     agents = {
         "Random": RandomAgent(),
         "Greedy": GreedyAgent(),
         "Combined (hand-tuned)": CombinedAgent(n_samples=5, depth=3),
     }
 
-    # Add RL-tuned agent if weights exist
+    # add RL-tuned agent if weights exist
     if rl_weights is not None:
         original_weights = h.DEFAULT_WEIGHTS.copy()
         for k, v in rl_weights.items():
@@ -43,7 +43,7 @@ def main():
         for k, v in original_weights.items():
             h.DEFAULT_WEIGHTS[k] = v
 
-    # Add NN agent if model exists
+    # add NN agent if model exists
     try:
         agents["NN Agent"] = NNAgent(
             model_path="training/models/value_net_v2.pt",
@@ -52,12 +52,12 @@ def main():
     except Exception as e:
         print(f"No NN model found, skipping NN agent: {e}")
 
-    # Run all matchups
+    # run all matchups
     print(f"\nRunning tournament with {len(agents)} agents...")
     results = run_full_evaluation(agents, n_games=50)
     print_summary_table(results)
 
-    # Save results
+    # save results
     os.makedirs("evaluation/results", exist_ok=True)
     for r in results:
         fn = (f"final_{r['agent1']}_vs_{r['agent2']}.json"

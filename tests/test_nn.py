@@ -1,5 +1,5 @@
 """
-tests/test_nn.py — Tests for the neural network components.
+tests/test_nn.py — tests for the neural network components.
 """
 
 import torch

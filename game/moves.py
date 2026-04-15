@@ -1,6 +1,5 @@
-
 """
-Phase 1: Functions for legal moves for a player and to identify dead cards.
+game/moves.py — legal move generation and dead-card detection.
 """
 
 from typing import Optional
@@ -17,9 +16,9 @@ def get_legal_moves(
     state: GameState, player: Optional[int] = None
 ) -> list[Move]:
     """
-    Return every legal move the given player can make.
-    If player is None, defaults to state.current_player.
-    Returns a list of Move - card, position and move_type.
+    return every legal move the given player can make.
+    if player is None, defaults to state.current_player.
+    returns a list of Move objects (card, position, move_type).
     """
     if player is None:
         player = state.current_player
@@ -63,9 +62,9 @@ def get_dead_cards(
     state: GameState, player: Optional[int] = None
 ) -> list[Card]:
     """
-    Return cards in the player's hand that cannot be played anywhere.
-    A card is dead when every board position it maps to is already occupied.
-    Returns a list of dead Cards.
+    return cards in the player's hand that cannot be played anywhere.
+    a card is dead when every board position it maps to is already occupied.
+    jacks are never dead — they always have valid targets.
     """
     if player is None:
         player = state.current_player

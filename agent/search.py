@@ -1,11 +1,9 @@
 """
-Phase 2: Minimax Search (optimized)
+agent/search.py — minimax search with alpha-beta pruning.
 
-Changes from previous version:
-  - Uses _apply_move_for_search instead of game_loop.apply_move
-  - No random card draws during search (removes noise)
-  - Faster since it skips discard/sequence tracking
-  - Removed import of game_loop.apply_move
+uses _apply_move_for_search instead of game_loop.apply_move:
+  - no random card draws during search (removes noise)
+  - skips discard/sequence tracking for speed
 """
 
 from shared.types import GameState, Move, next_player
@@ -18,33 +16,32 @@ MAX_MOVES_TO_SEARCH = 15
 
 def _apply_move_for_search(state, move):
     """
-    Lightweight move application for search only.
-    No card draw, no discard pile, no sequence tracking.
+    lightweight move application for search only.
+    no card draw, no discard pile, no sequence tracking.
     """
     player = state.current_player
     r, c = move.position
 
-    # Remove card from hand
+    # remove card from hand
     state.hands[player].remove(move.card)
 
-    # Execute on board
+    # execute on board
     if move.move_type in ("place", "wild"):
         state.chip_grid[r, c] = player
     elif move.move_type == "remove":
         state.chip_grid[r, c] = 0
 
-    # Switch player
+    # switch player
     state.current_player = next_player(player)
 
 
 def _order_moves(state: GameState, moves: list[Move], player: int) -> list[Move]:
-    """Sort moves by quick evaluation of the resulting state."""
+    """sort moves by quick 1-ply evaluation of the resulting state."""
     def move_priority(move: Move):
         child = state.copy()
         _apply_move_for_search(child, move)
-        # Quick 1-ply evaluation — no recursion, just score the result
         return evaluate(child, player)
-    
+
     return sorted(moves, key=move_priority, reverse=True)
 
 
@@ -56,7 +53,7 @@ def _minimax(
     alpha: float,
     beta: float
 ) -> float:
-    """Recursive minimax with alpha-beta pruning."""
+    """recursive minimax with alpha-beta pruning."""
     winner = check_winner(state)
     if winner == root_player:
         return 10000.0 + depth
@@ -104,8 +101,8 @@ def _minimax(
 
 def minimax_search(state: GameState, depth: int, player: int) -> dict[Move, float]:
     """
-    Run minimax with alpha-beta pruning on a fully observable state.
-    Returns dict mapping each legal Move to its minimax score.
+    run minimax with alpha-beta pruning on a fully observable state.
+    returns a dict mapping each legal Move to its minimax score.
     """
     original_player = state.current_player
     state.current_player = player
@@ -138,7 +135,7 @@ def minimax_search(state: GameState, depth: int, player: int) -> dict[Move, floa
 def minimax_search_with_eval(
     state: GameState, depth: int, player: int, eval_fn
 ) -> dict[Move, float]:
-    """Same as minimax_search but uses a custom evaluation function."""
+    """same as minimax_search but uses a custom evaluation function."""
 
     def _minimax_custom(state, depth, root_player, is_maximizing,
                          alpha, beta):

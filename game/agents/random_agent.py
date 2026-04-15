@@ -1,6 +1,5 @@
-
 """
-Phase 1:random agent for testing the game loop.
+game/agents/random_agent.py — random agent for testing the game loop.
 """
 
 import random

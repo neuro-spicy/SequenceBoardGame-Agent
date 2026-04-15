@@ -1,5 +1,5 @@
 """
-agent/nn_agent.py — Agent using CNN evaluation.
+agent/nn_agent.py — agent using CNN evaluation with belief-state search.
 """
 
 import torch
@@ -20,7 +20,7 @@ class NNAgent:
     ):
         self.n_samples = n_samples
         self.depth = depth
-        self.device = torch.device("cpu")  # CPU faster for single samples
+        self.device = torch.device("cpu")  # CPU is faster for single-sample inference
         self._cache = {}
 
         checkpoint = torch.load(model_path, map_location=self.device)

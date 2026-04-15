@@ -1,6 +1,6 @@
 
 """
-phase 1: Shared types and constants used by all modules.
+shared types and constants used by all modules.
 """
 
 from typing import NamedTuple
@@ -9,7 +9,7 @@ import numpy as np
 
 class Card(NamedTuple):
     """
-    A single playing card.
+    a single playing card.
 
     rank: "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A"
     suit: "spades", "hearts", "diamonds", "clubs" are always in lowercase.
@@ -23,35 +23,35 @@ class Card(NamedTuple):
 
 def is_one_eyed_jack(card: Card) -> bool:
     """
-    One-eyed Jack (J of spades, J of hearts)
-    Used to REMOVE an opponent's chip.
+    one-eyed jack (J of spades, J of hearts).
+    used to REMOVE an opponent's chip.
     """
     return card.rank == "J" and card.suit in ("spades", "hearts")
 
 
 def is_two_eyed_jack(card: Card) -> bool:
     """
-    Two-eyed Jack (J of diamonds, J of clubs)
-    Wild, place your chip on ANY empty cell.
+    two-eyed jack (J of diamonds, J of clubs).
+    wild — place your chip on any empty cell.
     """
     return card.rank == "J" and card.suit in ("diamonds", "clubs")
 
 
 def is_jack(card: Card) -> bool:
-    """True for any Jack (one-eyed or two-eyed)."""
+    """True for any jack (one-eyed or two-eyed)."""
     return card.rank == "J"
 
 
 class Move(NamedTuple):
     """
-    A single player action.
+    a single player action.
 
     card:      the Card being played from hand
     position:  (row, col) on the board, 0-indexed
     move_type: exactly one of "place", "wild", "remove"
                "place"  - regular card, put your chip on the matching cell
-               "wild"   - two-eyed Jack, put your chip on any empty cell
-               "remove" - one-eyed Jack, remove one opponent chip
+               "wild"   - two-eyed jack, put your chip on any empty cell
+               "remove" - one-eyed jack, remove one opponent chip
     """
     card: Card
     position: tuple[int, int]
@@ -83,62 +83,62 @@ SEQUENCES_TO_WIN: dict[int, int] = {
     3: 1,   # 3 players/teams: need 1 sequence
 }
 
-SEQUENCE_LENGTH: int = 5    # 5 is the sequence lenght
+SEQUENCE_LENGTH: int = 5    # 5 chips in a row to form a sequence
 
 
 # chip_grid sentinel values
-CORNER_CHIP: int = -1       # wild - counts for every player
+CORNER_CHIP: int = -1       # wild — counts for every player
 EMPTY: int = 0
 PLAYER_1: int = 1
 PLAYER_2: int = 2
 
 
 def get_opponents(player: int) -> list[int]:
-    """
-    Return a list of opponent player numbers.
-    """
+    """return a list of opponent player numbers."""
     all_players = list(range(1, NUM_PLAYERS + 1))
     return [p for p in all_players if p != player]
 
 
 def next_player(player: int) -> int:
-    """Return the player number whose turn comes next."""
+    """return the player number whose turn comes next."""
     return (player % NUM_PLAYERS) + 1
 
 
 class GameState:
     """
-    Complete snapshot of a Sequence game at one moment in time.
+    complete snapshot of a Sequence game at one moment in time.
 
-    Attributes:
-    chip_grid : list[list[int]]
-        10x10 grid.
-          Values:
-            -1  corner - wild, counts for all players
+    attributes:
+    chip_grid : np.ndarray (10x10, int32)
+        values:
+            -1  corner — wild, counts for all players
              0  empty
              1  player 1's chip
              2  player 2's chip
 
     hands : dict[int, list[Card]]
-        {player_number: [list of Cards]}.
-        Example: state.hands[1] -> player 1's current cards.
+        {player_number: [list of Cards]}
+        example: state.hands[1] -> player 1's current cards.
 
     deck : list[Card]
-        Draw pile. Cards are drawn from the end (deck.pop()).
+        draw pile. cards are drawn from the end (deck.pop()).
 
     discard_pile : list[Card]
-        Cards that have been played or declared dead.
+        cards that have been played or declared dead.
 
     current_player : int
-        Whose turn it is 1 or 2.
+        whose turn it is (1 or 2).
 
     completed_sequences : set[tuple[int, int]]
         (row, col) positions that are part of a finished sequence.
-        One-eyed Jacks CANNOT remove chips from these positions.
+        one-eyed jacks CANNOT remove chips from these positions.
+
+    sequence_counts : dict[int, int]
+        number of non-overlapping sequences each player has completed.
     """
 
     def __init__(self) -> None:
-        # 10x10 board - corners set to -1, everything else 0
+        # 10x10 board — corners set to -1, everything else 0
         self.chip_grid = np.zeros((BOARD_SIZE, BOARD_SIZE), dtype=np.int32)
         for r, c in CORNERS:
             self.chip_grid[r, c] = CORNER_CHIP
@@ -148,25 +148,26 @@ class GameState:
         self.discard_pile: list[Card] = []
         self.current_player: int = PLAYER_1
         self.completed_sequences: set[tuple[int, int]] = set()
+        self.sequence_counts: dict[int, int] = {1: 0, 2: 0}
 
     def get_chip(self, row: int, col: int) -> int:
-        """Return the chip value at (row, col)."""
+        """return the chip value at (row, col)."""
         return int(self.chip_grid[row, col])
 
     def set_chip(self, row: int, col: int, player: int) -> None:
-        """Place *player*'s chip at (row, col)."""
+        """place player's chip at (row, col)."""
         self.chip_grid[row, col] = player
 
     def remove_chip(self, row: int, col: int) -> None:
-        """Remove the chip at (row, col), setting it back to EMPTY."""
+        """remove the chip at (row, col), setting it back to EMPTY."""
         self.chip_grid[row, col] = EMPTY
 
     def copy(self) -> "GameState":
         """
-        Return a fast copy of the game state.
+        return a fast copy of the game state.
 
-        Lists and dictionaries are duplicated to avoid accidental sharing.
-        Cards and ints are shared safely because they cannot be changed.
+        lists and dicts are duplicated to avoid accidental sharing.
+        cards and ints are shared safely because they are immutable.
         """
         new = object.__new__(GameState)
         new.chip_grid = self.chip_grid.copy()
@@ -175,6 +176,7 @@ class GameState:
         new.discard_pile = list(self.discard_pile)
         new.current_player = self.current_player
         new.completed_sequences = set(self.completed_sequences)
+        new.sequence_counts = dict(self.sequence_counts)
         return new
 
     def __repr__(self) -> str:

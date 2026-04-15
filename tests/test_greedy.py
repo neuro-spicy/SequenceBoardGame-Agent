@@ -1,6 +1,5 @@
-# Phase 5
 """
-Tests for the greedy heuristic agent.
+tests/test_greedy.py — tests for the greedy heuristic agent.
 """
 
 from shared.types import Card, GameState

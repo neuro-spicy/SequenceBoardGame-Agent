@@ -1,6 +1,5 @@
-# Phase 1 & 4
 """
-Phase 4: Integration Test
+main.py — integration test and performance check.
 """
 
 import time
@@ -9,29 +8,29 @@ from game.game_loop import play_game, run_tournament
 from game.agents.random_agent import RandomAgent
 from agent.combined_agent import CombinedAgent
 
+
 def main():
     print("=" * 50)
-    print("Phase 4: Integration Test")
+    print("Integration Test")
     print("=" * 50)
 
-    # 1. Smoke test
+    # 1. smoke test — one full game with verbose output
     print("\n--- Smoke Test (1 game, verbose) ---\n")
     ai = CombinedAgent(n_samples=2, depth=2)
     rand = RandomAgent()
     winner = play_game(ai, rand, verbose=True)
     print(f"\nWinner: Player {winner}")
 
-    # 2. Performance check
+    # 2. performance check — measure AI decision time over 20 turns
     print("\n--- Performance Check ---\n")
     ai = CombinedAgent(n_samples=3, depth=2)
-    state = None
 
-    times = []
     from game.game_loop import new_game, apply_move
     from game.moves import get_legal_moves
     import random as rng
 
     state = new_game()
+    times = []
     for turn in range(20):
         player = state.current_player
         start = time.time()
@@ -51,7 +50,7 @@ def main():
         print(f"Avg AI decision time: {sum(times)/len(times):.2f}s")
         print(f"Max AI decision time: {max(times):.2f}s")
 
-    # 3. Tournament
+    # 3. tournament — AI vs Random over 50 games
     print("\n--- Tournament: AI vs Random (50 games) ---\n")
     ai = CombinedAgent(n_samples=3, depth=2)
     results = run_tournament(ai, RandomAgent(), n_games=50)

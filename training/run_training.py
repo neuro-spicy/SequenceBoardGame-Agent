@@ -1,9 +1,8 @@
-# training/run_training.py
 """
-Continuous RL weight training.
+training/run_training.py — continuous RL weight training.
 
-Runs indefinitely, saving the best weights after every generation.
-Press Ctrl+C at any time to stop — the latest best weights are
+runs indefinitely, saving the best weights after every generation.
+press Ctrl+C at any time to stop — the latest best weights are
 already saved to training/learned_weights.json.
 """
 
@@ -16,19 +15,19 @@ from agent.heuristic import DEFAULT_WEIGHTS
 
 def main():
     print("=" * 50)
-    print("Phase 5: Continuous Self-Play RL Weight Training")
+    print("Continuous Self-Play RL Weight Training")
     print("=" * 50)
     print()
     print("Press Ctrl+C at any time to stop.")
     print("Weights are saved after every generation.\n")
-    
-    # Load previous best weights instead of starting from defaults
+
+    # load previous best weights instead of starting from defaults
     try:
         with open("training/learned_weights.json") as f:
             data = json.load(f)
         best_weights = data["weights"]
         all_history = data.get("history", [])
-        # Resume the generation count based on history if available
+        # resume the generation count from saved history
         generation = len(all_history)
         print(f"Resuming from generation {generation} with weights: {best_weights}")
     except (FileNotFoundError, json.JSONDecodeError):
@@ -36,22 +35,21 @@ def main():
         all_history = []
         generation = 0
         print("No previous weights found, starting fresh")
-        
+
     print()
-    
-    # Handle Ctrl+C gracefully
+
+    # handle Ctrl+C gracefully
     def handle_interrupt(sig, frame):
         print(f"\n\nTraining interrupted after {generation} generations.")
         print(f"Best weights saved to training/learned_weights.json")
         sys.exit(0)
-    
+
     signal.signal(signal.SIGINT, handle_interrupt)
-    
-    # Run forever — each "round" is one generation
+
+    # run forever — each iteration is one generation (1 gen, 6 variants, 50 games each)
     while True:
         generation += 1
-        
-        # Run a single generation (1 gen, 6 variants, 50 games each)
+
         new_weights, history = train_weights(
             initial_weights=best_weights.copy(),
             n_generations=1,
@@ -61,26 +59,26 @@ def main():
             agent_n_samples=2,
             agent_depth=2,
         )
-        
-        # Check if weights improved
+
+        # check if weights improved this generation
         if new_weights != best_weights:
             best_weights = new_weights.copy()
             print(f"  >>> Generation {generation}: NEW BEST WEIGHTS FOUND")
         else:
             print(f"  >>> Generation {generation}: no improvement")
-        
-        # Save after every generation
+
+        # save after every generation
         all_history.extend(history)
         save_learned_weights(best_weights, all_history)
-        
-        # Print running summary
-        print(f"\n  [Gen {generation}] Current best:")
+
+        # print running summary
+        print(f"\n  [Gen {generation}] current best:")
         for key in best_weights:
             old = DEFAULT_WEIGHTS[key]
             new = best_weights[key]
             change = ((new - old) / old) * 100
-            direction = "↑" if new > old else "↓"
-            print(f"    {key}: {old:.2f} → {new:.2f} "
+            direction = "^" if new > old else "v"
+            print(f"    {key}: {old:.2f} -> {new:.2f} "
                   f"({direction} {abs(change):.0f}%)")
         print()
 

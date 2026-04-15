@@ -1,5 +1,5 @@
 """
-Phase 4: Full pipeline integration tests.
+tests/test_integration.py — full pipeline integration tests.
 """
 
 import time

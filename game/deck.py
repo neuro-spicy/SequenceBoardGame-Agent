@@ -1,13 +1,15 @@
-# Phase 1
+"""
+game/deck.py — deck construction for Sequence.
+
+a Sequence deck is two copies of a standard 52-card deck, shuffled.
+"""
 
 import random
 from shared.types import Card, RANKS, SUITS
 
 
 def build_full_deck() -> list[Card]:
-    """
-     A Sequence deck is two copies of a 52-card deck.
-    """
+    """build and return a shuffled 104-card double deck."""
     single_deck = []
     for rank in RANKS:
         for suit in SUITS:
