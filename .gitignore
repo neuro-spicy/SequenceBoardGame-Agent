@@ -210,3 +210,10 @@ __marimo__/
 
 # test files — kept locally but not pushed
 tests/
+
+# local-only scripts
+evaluation/generate_graphs.py
+
+# macOS metadata
+.DS_Store
+**/.DS_Store

@@ -54,7 +54,7 @@ def main():
 
     # run all matchups
     print(f"\nRunning tournament with {len(agents)} agents...")
-    results = run_full_evaluation(agents, n_games=100)
+    results = run_full_evaluation(agents, n_games=50)
     print_summary_table(results)
 
     # save results

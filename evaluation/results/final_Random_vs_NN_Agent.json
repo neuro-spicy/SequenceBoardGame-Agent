@@ -1,0 +1,13 @@
+{
+  "agent1": "Random",
+  "agent2": "NN Agent",
+  "n_games": 50,
+  "agent1_wins": 2,
+  "agent2_wins": 47,
+  "draws": 1,
+  "game_lengths": [],
+  "agent1_win_rate": 0.04,
+  "agent2_win_rate": 0.94,
+  "draw_rate": 0.02,
+  "total_time_seconds": 296.5
+}

@@ -171,10 +171,10 @@ class App:
         t2 = self.f_small.render("Choose agents for each side", True, TXT_DIM)
         surf.blit(t2, t2.get_rect(centerx=cx, centery=140))
 
-        # Player 1 selector
+        # player 1 selector
         self._draw_agent_row(surf, mouse_pos, "Player 1  (X — blue)",
                              self.p1_idx, 200, P1C)
-        # Player 2 selector
+        # player 2 selector
         self._draw_agent_row(surf, mouse_pos, "Player 2  (O — red)",
                              self.p2_idx, 270, P2C)
 

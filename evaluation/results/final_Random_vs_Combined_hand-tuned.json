@@ -1,0 +1,13 @@
+{
+  "agent1": "Random",
+  "agent2": "Combined (hand-tuned)",
+  "n_games": 50,
+  "agent1_wins": 1,
+  "agent2_wins": 49,
+  "draws": 0,
+  "game_lengths": [],
+  "agent1_win_rate": 0.02,
+  "agent2_win_rate": 0.98,
+  "draw_rate": 0.0,
+  "total_time_seconds": 223.6
+}
