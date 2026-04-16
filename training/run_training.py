@@ -2,8 +2,6 @@
 training/run_training.py — continuous RL weight training.
 
 runs indefinitely, saving the best weights after every generation.
-press Ctrl+C at any time to stop — the latest best weights are
-already saved to training/learned_weights.json.
 """
 
 import json

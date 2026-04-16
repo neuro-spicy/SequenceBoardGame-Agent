@@ -2,7 +2,7 @@
 training/nn_pipeline.py — continuous NN training pipeline.
 
 alternates between generating self-play data and retraining the CNN.
-saves the model after every training round, so Ctrl+C is safe.
+saves the model after every training round.
 
 run: python -m training.nn_pipeline
 """
