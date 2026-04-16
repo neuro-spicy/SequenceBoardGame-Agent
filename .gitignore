@@ -205,7 +205,7 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-*.pt
+round1_data.pt
 
 # test files — kept locally but not pushed
 tests/
