@@ -1,6 +1,8 @@
 """
 play_gui.py  —  Sequence Board Game GUI (pygame)
 Run:  python play_gui.py
+
+still working 
 """
 import os, json, threading, queue, sys
 import pygame
